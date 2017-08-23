@@ -35,4 +35,8 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'steam' => [
+        'secret' => env('STEAM_SECRET'),
+    ],
+
 ];

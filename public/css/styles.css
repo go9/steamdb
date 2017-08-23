@@ -1,0 +1,19 @@
+
+body{
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+table.table-borderless td,table.table-borderless th{
+    border: none !important;
+}
+
+.empty-button{
+    background:none;
+    border: none;
+}
+
+.btn-empty{
+    background:none;
+    border: none;
+}
+.btn-empty:focus {outline:0;}

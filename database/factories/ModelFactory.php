@@ -22,3 +22,24 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'remember_token' => str_random(10),
     ];
 });
+
+
+$factory->define(App\Game::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->realText(rand(10,20)),
+        'steam_id' => $faker->randomNumber(6),
+    ];
+});
+
+$factory->define(App\Store::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->word,
+    ];
+});
+
+$factory->define(App\Bundle::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->realText(rand(10,20)),
+        'store_id' => $faker->numberBetween(1,5),
+    ];
+});
