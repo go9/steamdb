@@ -127,16 +127,14 @@
     </script>
     <!-- Bulk Import Modal -->
     @include("games.bulk_import")
-    <script>
-        function processBulkImport(results) {
-            linkGamesToBundle(results);
-        }
-    </script>
+
 
     <!-- Add game to bundle Modal -->
     @include("games.game_import")
+
+
     <script>
-        function processGameImport(result) {
+        function processImport(result) {
             linkGamesToBundle(result);
         }
     </script>

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Redirect;
 use App\Purchase;
 use App\Game;
 use App\User;
+use App\Bundle;
+
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
@@ -219,6 +221,31 @@ class PurchaseController extends Controller
         return ["success" => true, "results" => $results];
     }
 
+    public function addBundleToPurchase(Request $request){
+        $this->validate($request, array(
+            'user_id' => 'required|numeric',
+            'name' => 'required|max:255',
+            'store_id' => 'required|numeric',
+            'date_purchased' => 'nullable|date',
+            'price_paid' => 'nullable|numeric',
+            'bundle_id' => 'nullable|numeric',
+            'tier_purchased' => 'nullable|numeric',
+            'notes' => 'nullable|string',
+        ));
+
+        // Add to purchase
+        $purchase = $this->update(new Purchase(), $request->except("_token"));
+
+        // Add the games
+        foreach(Bundle::find($request->bundle_id)->games as $game){
+            if($game->pivot->tier <= $request->tier_purchased){
+                $purchase->games()->save($game, ["availability" => 0]);
+            }
+        }
+
+        return back();
+    }
+
     public function massAction(Request $request){
         $this->validate($request, array(
             'action' => 'required|max:255',
@@ -239,6 +266,17 @@ class PurchaseController extends Controller
         }
 
         return ["sucess" => true];
+    }
+
+    public function update($item, $data){
+        foreach($data as $key => $attribute){
+            if($attribute == null){
+                continue;
+            }
+            $item->{$key} = $attribute;
+        }
+        $item->save();
+        return $item;
     }
 
     public function updateAvailability(Request $request){

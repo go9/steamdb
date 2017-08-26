@@ -32,6 +32,7 @@ Route::post('/purchase/update_purchase_item_price', 'PurchaseController@updatePu
 Route::post('/purchase/insert_game', 'PurchaseController@insertGamesIntoPurchase');
 Route::post('/purchase/insert_bundle', 'PurchaseController@addBundleToPurchase');
 Route::post('/purchase/action', 'PurchaseController@massAction');
+Route::post('/purchase/insert_bundle', 'PurchaseController@addBundleToPurchase');
 
 Route::resource('bundles', 'BundleController');
 Route::post('/bundles/change_tier','BundleController@changeTier')->name("bundle.change_tier");

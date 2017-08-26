@@ -38,8 +38,7 @@
             interval = setInterval(function () {
                 updateGame(games[counter]);
                 counter++;
-                sleep(3000);
-            }, 1);
+            }, 3000);
         });
 
         $("#stop").click(function () {
@@ -92,14 +91,6 @@
 
         }
 
-        function sleep(ms){
-            var start = new Date().getTime();
-            for (var i = 0; i < 1e7; i++) {
-                if ((new Date().getTime() - start) > ms){
-                    break;
-                }
-            }
-        }
     </script>
 
 

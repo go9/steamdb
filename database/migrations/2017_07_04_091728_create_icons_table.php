@@ -36,7 +36,7 @@ class CreateIconsTable extends Migration
                     "default_size" => ""
                 ],
                 [
-                    'id' => 'extenral-link-square',
+                    'id' => 'external-link-square',
                     "name" => "Link",
                     "default_color" => "",
                     "default_size" => ""
