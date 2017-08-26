@@ -17,7 +17,7 @@ class Steam
     protected $applist = null;
 
     protected $urls = [
-        "applist" => "http://api.steampowered.com/ISteamApps/GetAppList/v0001/",
+        "applist" => "http://api.steampowered.com/ISteamApps/GetAppList/v0002/",
         "app" => "http://store.steampowered.com/api/appdetails/?appids=",
         "appPriceFilters" => "&cc=us&filters=price_overview",
         "package" => "http://store.steampowered.com/api/packagedetails/?packageids="
@@ -50,7 +50,7 @@ class Steam
     public function getApplist(){
         // Check if we already have the applist
         if ($this->applist == null) {
-            $this->applist = json_decode(file_get_contents($this->urls['applist']), true)["applist"]["apps"]["app"];
+            $this->applist = json_decode(file_get_contents($this->urls['applist']), true)["applist"]["apps"];
         }
         return $this->applist;
     }
