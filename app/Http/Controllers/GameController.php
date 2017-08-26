@@ -188,7 +188,12 @@ class GameController extends Controller
     {
         // Sync with steam
         $this->syncApplist();
-        return view("settings.updatedatabase")->withGames(Game::where("public", "-1")->pluck("steam_id")->toArray());
+        return view("settings.updatedatabase")->withGames(
+            Game::where("public", "-1")
+                ->where("type","unknown")
+                ->pluck("steam_id")
+                ->toArray()
+        );
     }
 
     // Functions
@@ -207,7 +212,7 @@ class GameController extends Controller
         $steam = resolve('App\External\Steam');
         $appids = array_diff(
             array_column($steam->getApplist(), "appid"),
-            Game::pluck("steam_id")->toArray()
+            Game::where("type", "!=","package")->pluck("steam_id")->toArray()
         );
 
         $games = [];

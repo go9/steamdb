@@ -243,7 +243,7 @@ class PurchaseController extends Controller
             }
         }
 
-        return back();
+        return Redirect("purchases");
     }
 
     public function massAction(Request $request){

@@ -17,7 +17,7 @@ class Steam
     protected $applist = null;
 
     protected $urls = [
-        "applist" => "http://api.steampowered.com/ISteamApps/GetAppList/v0001/",
+        "applist" => "http://api.steampowered.com/ISteamApps/GetAppList/v0002/",
         "app" => "http://store.steampowered.com/api/appdetails/?appids=",
         "appPriceFilters" => "&cc=us&filters=price_overview",
         "package" => "http://store.steampowered.com/api/packagedetails/?packageids="

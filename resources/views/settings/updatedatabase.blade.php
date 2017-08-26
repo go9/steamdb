@@ -29,6 +29,7 @@
         var counter = 0;
         var games = {!! json_encode($games) !!};
         console.log("Number of games: " + games.length);
+        console.log(games);
 
         $("#start").click(function () {
             // hide the start button and show the stop button
@@ -55,6 +56,7 @@
                 url: '/games/store/' + id,
                 type: 'GET',
                 dataType : 'json',
+                async: false,
                 success: function (json, response) {
                     console.log(json);
 
