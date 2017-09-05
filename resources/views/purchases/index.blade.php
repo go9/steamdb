@@ -188,7 +188,7 @@
 
 
     <table class="table table-sm table-responsive table-hover" id="purchases-table"
-           style="margin:15px;overflow-x:auto;">
+           style="margin:15px;overflow-y:visible;overflow-x:scroll;padding-bottom:200px;">
         <thead id="purchase-table-thead">
         <tr>
             <th>
@@ -214,12 +214,12 @@
             </th>
         </tr>
         </thead>
-
-        <tbody>
-        </tbody>
     </table>
 
     <script>
+        console.log($("#purchases-table").children());
+
+
         resize();
 
         $(window).resize(function () {
@@ -294,6 +294,11 @@
             }
         }
 
+        function removePurchase(purchase){
+
+        }
+
+
         function emptyTable() {
             counter = 0;
             $("#purchases-table tbody").empty();
@@ -305,7 +310,6 @@
 
             // Create row
             var tr = $("<tr>", {
-                id: "" + purchase.id,
                 bgcolor: "bisque"
             });
 
@@ -349,6 +353,7 @@
             var div = $("<div>", {
                 style: "display: inline-flex;"
             });
+
             // Single add
             div.append(
                 $("<button/>", {
@@ -387,6 +392,7 @@
                                 },
                                 dataType: 'json',
                                 success: function (json, response, three) {
+                                    tbody.remove();
                                 },
                                 error: function (request, error) {
                                 }
@@ -400,13 +406,17 @@
                 })
             );
 
-            // Add to table
-            $('#purchases-table').append(tr);
+            // Wrap in tbody
+            var tbody = $("<tbody/>");
+            tbody.append(tr);
 
-            addPurchaseItems(purchase, tr)
+            // Add to table
+            $('#purchases-table').append(tbody);
+
+            addPurchaseItems(purchase, tbody)
         }
 
-        function addPurchaseItems(purchase, tr) {
+        function addPurchaseItems(purchase, tbody) {
             // Add purchase items
             var localCounter = 0;
 
@@ -418,7 +428,9 @@
 
                 // Create row
                 var tr = $("<tr>", {
-                    id: "" + purchase.id,
+                    data: {
+                        "counter" : counter + "." + localCounter
+                    },
                 });
 
 
@@ -471,7 +483,7 @@
                 );
 
                 // Add to table
-                $('#purchases-table').append(tr);
+                tbody.append(tr);
 
             }
         }
@@ -642,7 +654,8 @@
 
             var dropdownMenu =
                 $("<div>", {
-                    class: "dropdown-menu dropdown-menu-right"
+                    class: "dropdown-menu dropdown-menu-right",
+                    style: "z-index:100;"
                 });
             dropdown.append(dropdownMenu);
 

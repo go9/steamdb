@@ -38,29 +38,63 @@
         </ul>
         <ul class="navbar-nav">
 
-            <li class="nav-item" >
+            <li class="nav-item">
             @if(Auth::check())
                 <!-- User is logged in -->
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="user-menu"
-                            data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        {{Auth::user()->name}}
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="user-menu">
-                        <a class="dropdown-item" href="/settings">Settings</a>
-                        <form method="post" action="{!!route("logout") !!}">
-                            {{ csrf_field() }}
-                            <button class="dropdown-item">Logout</button>
-                        </form>
+                    <div>
+                        {{-- Check if user logged in through steam--}}
+                        @if(Auth::user()->checkSteam())
+                            <div style="height:40px;">
+                                <div style="float:left;width:20%;">
+                                    <img style="height:100%;" src="{!! Auth::user()->avatar !!}">
+                                </div>
+                                <div style="float:left;width:70%;margin-left:10%;">
+                                    <div class="dropdown">
+                                        <button class="btn btn-empty dropdown-toggle"
+                                                type="button"
+                                                id="user-menu"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                style="height:100%;line-height:50%;">
+                                            {{Auth::user()->name}}
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="user-menu">
+                                            <a class="dropdown-item" href="/settings">Settings</a>
+                                            <form method="post" action="{!!route("logout") !!}">
+                                                {{ csrf_field() }}
+                                                <button class="dropdown-item">Logout</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <div class="dropdown">
+                                <button class="btn btn-empty dropdown-toggle"
+                                        type="button"
+                                        id="user-menu"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false">
+                                    {{  Auth::user()->email }}
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="user-menu">
+                                    <a class="dropdown-item" href="/settings">Settings</a>
+                                    <form method="post" action="{!!route("logout") !!}">
+                                        {{ csrf_field() }}
+                                        <button class="dropdown-item">Logout</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                </div>
 
             @else
-                <!-- User is not logged in -->
-                <a class='btn btn-primary' href="{{route('login')}}" style="margin:3px;">
-                    Login
-                </a>
+            <!-- User is not logged in -->
+            <a class='btn btn-primary' href="{{route('login')}}" style="margin:3px;">
+                Login
+            </a>
             @endif
             </li>
         </ul>
@@ -68,7 +102,8 @@
 </nav>
 
 <form action="/games" method="GET">
-    <div id="menu-searchbar" class="col-sm-12 col-md-8 col-lg-6 input-group" style="float:right;margin-top:5px;margin-bottom:5px;">
+    <div id="menu-searchbar" class="col-sm-12 col-md-8 col-lg-6 input-group"
+         style="float:right;margin-top:5px;margin-bottom:5px;">
         <input class="form-control" type="text" name="keywords" placeholder="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
     </div>

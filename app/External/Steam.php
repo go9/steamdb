@@ -17,6 +17,7 @@ class Steam
     protected $applist = null;
 
     protected $urls = [
+        "base" => "http://api.steampowered.com",
         "applist" => "http://api.steampowered.com/ISteamApps/GetAppList/v0002/",
         "app" => "http://store.steampowered.com/api/appdetails/?appids=",
         "appPriceFilters" => "&cc=us&filters=price_overview",
@@ -29,15 +30,17 @@ class Steam
         $this->key = $key;
     }
 
-    public function getKey(){
+    public function getKey()
+    {
         return $this->key;
     }
 
-    public function getStore(){
+    public function getStore()
+    {
         // Check if we already have the store
-        if($this->store == null){
+        if ($this->store == null) {
             //Get store from DB
-            if(!$this->store = Store::where("name","Steam")->first()){
+            if (!$this->store = Store::where("name", "Steam")->first()) {
                 $store = new Store;
                 $store->name = "Steam";
                 $store->save();
@@ -47,7 +50,8 @@ class Steam
         return $this->store;
     }
 
-    public function getApplist(){
+    public function getApplist()
+    {
         // Check if we already have the applist
         if ($this->applist == null) {
             $this->applist = json_decode(file_get_contents($this->urls['applist']), true)["applist"]["apps"];
@@ -55,15 +59,16 @@ class Steam
         return $this->applist;
     }
 
-    public function parseData($id, $type = "app"){
+    public function parseData($id, $type = "app")
+    {
 
         // Validate the appid
-        if(!is_numeric($id)){
+        if (!is_numeric($id)) {
             return ["success" => false, "code" => 1, "message" => "Invalid appid"];
         }
 
         // Get the data from Steam
-        if(!$content = file_get_contents($this->urls[$type] . $id)){
+        if (!$content = file_get_contents($this->urls[$type] . $id)) {
             return ["success" => false, "code" => 2, "message" => "Steam blocked the call."];
         }
         $json = json_decode($content, true);
@@ -72,22 +77,22 @@ class Steam
         $json = reset($json);
 
         // Check if steam had the info for the appid we provided.
-        if(!isset($json["success"])) {
+        if (!isset($json["success"])) {
             return ["success" => false, "code" => 3, "message" => "There was an error parsing the JSON from Steam."];
         }
 
-        if($json["success"] == false){
+        if ($json["success"] == false) {
             return ["success" => false, "code" => 4, "message" => "Steam didn't have any data for this appid"];
         }
 
-        if($json["success"] == true){
+        if ($json["success"] == true) {
             // Set the Steam id
-            if(!isset($json["data"]["steam_id"])) {
+            if (!isset($json["data"]["steam_id"])) {
                 $json["data"]["steam_id"] = $id;
             }
 
             // Convert the languages to array
-            if(isset($json["data"]["supported_languages"])){
+            if (isset($json["data"]["supported_languages"])) {
                 $json["data"]["supported_languages"] = $this->getLanguagesAsArray($json["data"]["supported_languages"]);
             }
         }
@@ -95,7 +100,8 @@ class Steam
         return $json;
     }
 
-    public function parseAppData($id){
+    public function parseAppData($id)
+    {
         return $this->parseData($id);
     }
 
@@ -185,4 +191,130 @@ class Steam
         return $result;
     }
 
+    // Api's
+
+    function buildUrl($api, $items){
+        $base = "http://api.steampowered.com";
+        $args = [];
+
+        foreach($items as $key => $item){
+            if($key == null || $item == null){
+                continue;
+            }
+            $this->args[$key] = $item;
+        }
+
+        return $base . $api . "?" . http_build_query($args);
+    }
+
+    function newsForApp($appid, $count = 999999, $length = 999999)
+    {
+        return $this->buildUrl("/ISteamNews/GetNewsForApp/v0002/", [
+            "count" => $count,
+            "maxlength" =>$length,
+            "appid" =>$appid
+        ]);
+    }
+
+    function globalAchievementPercentagesForApp($appid)
+    {
+        return $this->buildUrl("/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/", [
+            "gameid" => $appid,
+            "format" =>"json"
+        ]);
+    }
+
+    function globalStatsForGame($appid)
+    {
+        // ??
+
+        return $this->buildUrl( "/ISteamUserStats/GetGlobalStatsForGame/v0001/", [
+            "gameid" => $appid,
+            "format" =>"json"
+        ]);
+    }
+
+    function playerSummaries($steamids)
+    {
+        return $this->buildUrl("/ISteamUser/GetPlayerSummaries/v0002/", [
+            "steamids" => $steamids,
+            "key" => $this->key,
+            "format" =>"json"
+        ]);
+    }
+
+    function friendList($steamid)
+    {
+        return $this->buildUrl("/ISteamUser/GetFriendList/v0001", [
+            "key" => $this->key,
+            "steamids" => $steamid,
+            "relationship" =>"friend",
+            "format" =>"json"
+        ]);
+    }
+
+    function playerAchievements($steamid, $appid)
+    {
+        return $this->buildUrl("/ISteamUserStats/GetPlayerAchievements/v0001/", [
+            "key" => $this->key,
+            "steamid" => $steamid,
+            "appid" => $appid,
+        ]);
+    }
+
+    function userStatsForGame($steamid, $appid)
+    {
+        return $this->buildUrl( "/ISteamUserStats/GetUserStatsForGame/v0002/", [
+            "key" => $this->key,
+            "steamid" => $steamid,
+            "appid" => $appid,
+        ]);
+    }
+
+    function ownedGames($steamid)
+    {
+        return $this->buildUrl( "/IPlayerService/GetOwnedGames/v0001/", [
+            "key" => $this->key,
+            "steamid" => $steamid,
+            "format" => "json",
+        ]);
+    }
+
+    function recentlyPlayedGames($steamid, $count = 999999)
+    {
+        return $this->buildUrl( "/IPlayerService/GetRecentlyPlayedGames/v0001/", [
+            "key" => $this->key,
+            "steamid" => $steamid,
+            "count" => $count,
+            "format" => "json"
+        ]);
+    }
+
+    function IsPlayingSharedGame($steamid, $appid)
+    {
+        return $this->buildUrl( "/IPlayerService/IsPlayingSharedGame/v0001/", [
+            "key" => $this->key,
+            "steamid" => $steamid,
+            "appid_playing" => $appid,
+            "format" => "json"
+        ]);
+    }
+
+    function schemaForGame($appid)
+    {
+        return $this->buildUrl( "/IPlayerService/IsPlayingSharedGame/v0001/", [
+            "key" => $this->key,
+            "appid" => $appid,
+            "format" => "json"
+        ]);
+    }
+
+    function playerBans($steamids){
+        return $this->buildUrl( "/ISteamUserStats/GetSchemaForGame/v2/", [
+            "key" => $this->key,
+            "steamids" => $steamids
+        ]);
+    }
+
 }
+

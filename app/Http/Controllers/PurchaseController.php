@@ -159,6 +159,7 @@ class PurchaseController extends Controller
     public function destroy($id)
     {
         $purchase = Purchase::find($id);
+
         if($purchase == null){
             Session::flash("message-danger", "The purchase could not be located. Nothing was deleted.");
         }
@@ -169,8 +170,14 @@ class PurchaseController extends Controller
             Session::flash("message-success", "The purchase was deleted");
             $purchase->delete();
         }
+       return ["sucess" => true, "data" => $purchase];
+    }
 
-        return back();
+    public function destroyPurchaseItem(Request $request){
+        $this->validate($request, array(
+            'game_purchase_id' => 'required|numeric'
+        ));
+
 
     }
 

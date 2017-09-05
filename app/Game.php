@@ -76,10 +76,11 @@ class Game extends Model
 
     public function headerImage(){
         $headerImage = $this->images->where("type","header_image")->first();
-
-        return count($headerImage) == 0
-            ? "http://cdn.akamai.steamstatic.com/steam/apps/10/header.jpg?t=1447887426"
-            : $headerImage;
+        if($headerImage == null){
+            $headerImage = new Image();
+            $headerImage->url = "../images/empty_banner.gif";
+        }
+        return $headerImage;
     }
 
     public function packageContents()

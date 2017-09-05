@@ -11,7 +11,7 @@
 |
 */
 
-Auth::routes();
+
 
 Route::get("/test", 'GameController@test');
 
@@ -20,9 +20,9 @@ Route::get("/inventory", 'GameController@showInventory')->name("games.inventory"
 Route::get('/search', 'GameController@search');
 
 Route::get('/games/sync_applist_from_steam', 'GameController@SyncApplistTest');
-Route::get('/games/store/{id}', 'GameController@storeApp');
+Route::get('/games/store/{id}', 'GameController@storeGame');
+Route::get('/games/store_package/{id}', 'GameController@storePackage');
 Route::resource('games', 'GameController');
-
 
 Route::resource('purchases', 'PurchaseController');
 Route::post('/purchase/get_purchases', 'PurchaseController@getPurchases');
@@ -46,9 +46,16 @@ Route::post("settings/auto_match", "GameController@g2aAutoMatch");
 Route::get("settings/g2a_price_updater", "SettingsController@g2aPriceUpdater");
 Route::post("settings/g2a_update_price", "GameController@g2aUpdatePrice");
 Route::get("settings/myaccount", "SettingsController@showMyAccount");
-Route::get("settings/update_database", "GameController@updateDatabase");
 
-Route::get("/", "GameController@index");
-//Route::get("/", "GameController@home");
+Route::get("settings/update_database_games", "GameController@updateGames");
+Route::get("settings/update_database_packages", "GameController@updatePackages");
+
+Route::get('auth/steam', 'AuthController@redirectToSteam')->name('auth.steam');
+Route::get('auth/steam/handle', 'AuthController@handle')->name('auth.steam.handle');
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+Auth::routes();
+
+//Route::get("/", "GameController@index");
+Route::get("/", "GameController@home");
 
 

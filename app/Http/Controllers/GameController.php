@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Input;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+
 use App\Game;
 use App\Genre;
 use App\Category;
@@ -58,6 +59,7 @@ class GameSearch
 
     public function searchBy($categories)
     {
+
         // Exceptions
         if (isset($categories["page"])) {
             unset($categories["page"]);
@@ -129,6 +131,7 @@ class GameSearch
         if (isset($_GET)) {
             $this->results->input = $_GET;
         }
+
         return $this->results;
     }
 }
@@ -145,7 +148,17 @@ class GameController extends Controller
     // Views
     public function test()
     {
-        return view("test");
+        /*
+        $steam = resolve('App\External\Steam');
+        return \redirect(
+           $steam->urlBuilder()->isPlayingSharedGame(Auth::user()->steamid, 10)->get()
+        );
+        //return view("test");
+        */
+
+        $id = 321;
+
+
     }
 
     public function home()
@@ -184,17 +197,28 @@ class GameController extends Controller
         return view("games.index")->withGames(GameSearch()->searchBy($_GET)->paginatedResults());
     }
 
-    public function updateDatabase()
+    public function updateGames()
     {
         // Sync with steam
         $this->syncApplist();
         return view("settings.updatedatabase")->withGames(
             Game::where("public", "-1")
-                ->where("type","unknown")
+                ->where("type", "unknown")
                 ->pluck("steam_id")
                 ->toArray()
         );
     }
+
+    public function updatePackages()
+    {
+        return view("settings.updatedatabasepackages")->withGames(
+            Game::where("public", "-1")
+                ->where("type", "package")
+                ->pluck("steam_id")
+                ->toArray()
+        );
+    }
+
 
     // Functions
     public function search()
@@ -212,7 +236,7 @@ class GameController extends Controller
         $steam = resolve('App\External\Steam');
         $appids = array_diff(
             array_column($steam->getApplist(), "appid"),
-            Game::where("type", "!=","package")->pluck("steam_id")->toArray()
+            Game::where("type", "!=", "package")->pluck("steam_id")->toArray()
         );
 
         $games = [];
@@ -310,7 +334,7 @@ class GameController extends Controller
 
     // Crud
 
-    public function storeApp($id)
+    public function storeGame($id)
     {
         // Get the data
         $steam = resolve("App\External\Steam");
@@ -323,7 +347,6 @@ class GameController extends Controller
         $packages = null;
         $game = Game::where("steam_id", $id)->where("type", "!=", "package")->first();
         // If the game is not in the db, create it.
-
 
         // Check if the data is good
         if ($json["success"] == false) {
@@ -534,22 +557,37 @@ class GameController extends Controller
 
     public function storePackage($id)
     {
-        // Get the data
-        $steam = resolve("App\External\Steam");
-        if (!$content = $steam->parsePackageData($id)) {
-            return false;
+// Check if we have the package.
+        $package = Game::where("steam_id", $id)->where("type", "package")->first();
+        if ($package == null) {
+            // If not, make it. (don't save it though)
+            $package = new Game;
+            $package->type = "package";
+            $package->public = -1;
+            $package->steam_id = $id;
         }
 
-        // Verify the required attributes are set
-        if (!isset($content["name"], $content["steam_id"])) {
-            return false;
+
+        // Get the data from steam
+        $json = resolve("App\External\Steam")->parsePackageData($id);
+
+        // Verify the data is good
+        if ($json["success"] == false) {
+            // Check what kind of error it was
+            if ($json["code"] == 4) {
+                // Steam didn't have anything for us. If we aleady have it, let's update it.
+                if ($package != null) {
+                    $package->public = 0;
+                    $package->save();
+                }
+            }
+            return $json;
         }
 
-        // Check if the package is already in the database.
-        $package = Game::firstOrNew([
-            "steam_id" => $content["steam_id"],
-            "type" => "package"
-        ]);
+        // Store steam id
+        $json["data"]["steam_id"] = $id;
+        $content = $json["data"];
+
 
         $package->name = $content['name'];
         $package->description = isset($content['page_content']) ? $content['page_content'] : null;
@@ -558,6 +596,7 @@ class GameController extends Controller
         $package->platform_mac = isset($content['platforms']["mac"]) ? $content['platforms']["mac"] : null;
         $package->platform_linux = isset($content['platforms']["linux"]) ? $content['platforms']["linux"] : null;
         $package->save();
+
 
         // Add images
         if (isset($content['header_image']) && !Image::where('game_id', $package->id)->where("url", $content['header_image'])->exists()) {
@@ -586,7 +625,8 @@ class GameController extends Controller
 
 
         // Get the package contents
-        $gamesInPackage = 0;
+        $gamesInPackage = null;
+
         foreach ($content['apps'] as $appid) {
             // Check if the game is in the database.
             $game = Game::where("steam_id", $appid['id'])->where("type", "!=", "package")->first();
@@ -602,16 +642,19 @@ class GameController extends Controller
                 "content_id" => $game->id
             ]);
 
-            $gamesInPackage++;
+            $gamesInPackage[] = $game;
         }
 
         // Check if only one in package- if so, set public to false
-        if ($gamesInPackage <= 1) {
-            $package->public = false;
-            $game->save();
-        }
+        $package->public = count($gamesInPackage) > 1 ? true : false;
+        $package->save();
 
-        return $package;
+
+        return [
+            "success" => true,
+            "data" => $package,
+            "contents" => $gamesInPackage
+        ];
     }
 
     // Unused crud (for now)

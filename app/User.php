@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+
     public function purchases()
     {
         return $this->hasMany('App\Purchase');
@@ -110,4 +111,7 @@ class User extends Authenticatable
         return $this;
     }
 
+    public function checkSteam(){
+        return $this->attributes["steamid"] == null ? false : true;
+    }
 }

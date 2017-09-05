@@ -16,4 +16,7 @@ table.table-borderless td,table.table-borderless th{
     background:none;
     border: none;
 }
-.btn-empty:focus {outline:0;}
+
+.btn-empty:focus {
+    outline: none;
+}

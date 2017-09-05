@@ -20,7 +20,8 @@
                 <li class="list-group-item list-group-item-warning" style="padding:5px;">
                     <div class="list-group" style="width:100%;">
                         <a href="#" class="list-group-item list-group-item-action">Manage Icons</a>
-                        <a href="/settings/update_database" class="list-group-item list-group-item-action">Update Database</a>
+                        <a href="/settings/update_database_games" class="list-group-item list-group-item-action">Update Games</a>
+                        <a href="/settings/update_database_packages" class="list-group-item list-group-item-action">Update Packages</a>
                         <a href="/settings/g2a_auto_matcher" class="list-group-item list-group-item-action">G2a Auto Matcher</a>
                         <a href="/settings/g2a_price_updater" class="list-group-item list-group-item-action">G2a Update Prices</a>
                     </div>

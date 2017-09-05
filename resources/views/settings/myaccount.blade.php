@@ -13,6 +13,14 @@
                 <td>Email</td>
                 <td>{{Auth::user()->email}}</td>
             </tr>
+            <tr>
+                <td>Type</td>
+                <td>
+                    @foreach(Auth::user()->roles as $role)
+                        {!! $role->name !!} <br>
+                    @endforeach
+                </td>
+            </tr>
         </table>
         </p>
     </div>

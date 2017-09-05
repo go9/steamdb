@@ -178,6 +178,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // laravel-steam-auth
+        // https://github.com/invisnik/laravel-steam-auth
+
+        Invisnik\LaravelSteamAuth\SteamServiceProvider::class,
     ],
 
     /*
