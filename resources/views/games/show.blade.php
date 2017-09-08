@@ -113,7 +113,7 @@
                 <!-- Display G2A Pricing-->
                     <div>
                         @php
-                            $data = ["dates" => null, "prices" => null, "stores" => null];
+                            $data = ["dates" => [], "prices" => [], "stores" => []];
                             foreach($game->prices->sortByDesc("created_at") as $result){
                                 if($result->pivot->store_id ==  resolve("App\External\G2aApi")->getStore()->id){
                                     $data["dates"][] = strtotime($result->pivot->created_at);
@@ -122,19 +122,11 @@
                                 }
                             }
 
-
-
-                            /*
-                            $data["dates"] = json_encode($data["dates"]);
-                            $data["prices"] = json_encode($data["prices"]);
-                            $data["stores"] = json_encode($data["stores"]);
-                            */
-
                             $g2a = $game->g2a;
                         @endphp
 
-
-                        <div style="border:1px solid black;padding:10px;">
+                        @if(sizeof($data["prices"]) > 0)
+                            <div style="border:1px solid black;padding:10px;">
                             @if($g2a != null)
 
 
@@ -209,6 +201,7 @@
                                 </div>
                             @endif
                         </div>
+                        @endif
                     </div>
                 @endif
             </div>

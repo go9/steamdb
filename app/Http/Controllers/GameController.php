@@ -272,29 +272,38 @@ class GameController extends Controller
         return $games;
     }
 
-    public function g2aAutoMatch(Request $request)
-    {
-        $this->validate($request, [
-            "game_id" => "required|numeric"
-        ]);
+    public function g2aAutoMatcher(){
 
-        $game = Game::find($request->game_id);
-        if ($game == null) {
-            return ["success" => false, "code" => 0, "message" => "The game was not found", "data" => ["id" => $request->game_id]];
+        //ini_set('memory_limit', '-1');
+
+        $data = [
+            "matched" => [],
+            "unmatched" => [],
+            "failure" => []
+        ];
+
+        $games = Game::whereNull("g2a_id")->where("public",1)->get();
+        foreach($games as $game){
+            console($game);
+
+            if ($game == null) {
+                $data["error"][] = $game->id;
+                continue;
+             }
+
+            // Search G2a For any matches
+            $results = resolve("App\External\G2aApi")->searchByPhrase($game->name);
+            if (isset($results["perfect_match"]) && $results["perfect_match"] != false) {
+                $game->g2a_id = $results["perfect_match"]["id"];
+                $game->save();
+                $data["matched"][] = $game->id;
+            }
+            else{
+                $data["unmatched"][] = $game->id;
+            }
         }
 
-
-        // Search G2a For any matches
-        $results = resolve("App\External\G2aApi")->searchByPhrase($game->name);
-
-        if (isset($results["perfect_match"]) && $results["perfect_match"] != false) {
-            $game->g2a_id = $results["perfect_match"]["id"];
-            $game->save();
-            return ["success" => true, "data" => $game];
-        } else {
-            return ["success" => false, "code" => 1, "message" => "No match was found", "data" => $game];
-        }
-
+        return view("settings.g2a_auto_matcher")->withData($data);
     }
 
     public function g2aUpdatePrice(Request $request)

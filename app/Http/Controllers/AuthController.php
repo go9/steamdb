@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Psr7\Request;
 use Invisnik\LaravelSteamAuth\SteamAuth;
 use App\User;
@@ -52,7 +51,7 @@ class AuthController extends Controller
     public function handle()
     {
         if($this->steam->steamId != null){
-            //dd($this->steam);
+            dd($this->steam);
         }
 
         if ($this->steam->validate()) {
@@ -61,8 +60,8 @@ class AuthController extends Controller
             if (!is_null($info)) {
                 $user = $this->findOrNewUser($info);
 
-                Session::put('steam_info', $info);
                 Auth::login($user, true);
+
                 return redirect($this->redirectURL); // redirect to site
             }
         }
@@ -87,6 +86,7 @@ class AuthController extends Controller
 
         $user = new User();
         $user->name = $info->realname;
+        $user->email = $info->personaname;
         $user->steamid = $info->steamID64;
         $user->avatar = $info->avatar;
 
