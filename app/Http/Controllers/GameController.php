@@ -122,7 +122,13 @@ class GameSearch
 
     public function results()
     {
-        return $this->query->get();
+        $this->results = $this->query->get();
+
+        if (isset($_GET)) {
+            $this->results->input = $_GET;
+        }
+
+        return $this->results;
     }
 
     public function paginatedResults()
@@ -626,6 +632,19 @@ class GameController extends Controller
 
         // Get the package contents
         $gamesInPackage = null;
+
+        // Verify that there are some apps
+        if(!isset($content['apps'])){
+
+            $package->public = false;
+            $package->save();
+
+            return [
+                "success" => false,
+                "data" => $package,
+                "message" => "There were no games in this package"
+            ];
+        }
 
         foreach ($content['apps'] as $appid) {
             // Check if the game is in the database.
