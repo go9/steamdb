@@ -12,4 +12,8 @@ class Store extends Model
         return $this->belongsToMany('App\Game')->withPivot("price")->withTimestamps();
     }
 
+    public function bundles(){
+        return $this->hasMany('App\Bundle');
+    }
+
 }

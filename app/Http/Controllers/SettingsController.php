@@ -21,8 +21,8 @@ class SettingsController extends Controller
         return view("settings.index");
     }
 
-    public function showG2aSettings(){
-        return view("settings.g2a");
+    public function showConnections(){
+        return view("settings.connections");
     }
 
     public function showMyAccount(){

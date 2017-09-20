@@ -9,6 +9,12 @@
                         <form class="form-horizontal" role="form" method="POST" action="{{ route('register') }}">
                             {{ csrf_field() }}
 
+                            @if(isset($info))
+                                {!! var_dump($info) !!}
+                                <input type="hidden" name="steamid" value="{{ $info->steamID64 }}">
+                                <input type="hidden" name="avatar" value="{{ $info->avatar }}">
+                            @endif
+
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>

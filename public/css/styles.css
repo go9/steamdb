@@ -1,22 +1,96 @@
-
-body{
-    font-family: 'Open Sans', sans-serif !important;
+.game-title{
+    font-size:1.7em;
+    margin-bottom:20px;
+    background-color:rgba(1,1,1,.6);
+    color:white;
+    padding:5px;
 }
 
-table.table-borderless td,table.table-borderless th{
-    border: none !important;
+.game-title:hover{
+    color:white;
 }
 
-.empty-button{
-    background:none;
-    border: none;
+/* Navigation bar */
+.nav-link {
+    text-transform: uppercase;
+    font-family: 'Fjalla One', sans-serif;
+    color: white !important;
+    font-weight: 100 !important;
 }
 
-.btn-empty{
-    background:none;
-    border: none;
+.nav-link:hover{
+
+    font-weight: 400 !important;
+    background-color:rgba(1,1,1,.5);
 }
 
-.btn-empty:focus {
-    outline: none;
+.active{
+    font-weight: 400 !important;
 }
+
+.menu-item {
+    width: auto;
+    display: inline-block;
+    margin: 0;
+    padding:0;
+}
+
+#nav-container-top{
+    background-color:#31343D;
+    width:100%;
+}
+
+#nav-logo{
+    height:60px;
+    filter: invert(0);
+}
+
+#nav-login{
+    float:right;
+    display:flex;
+}
+#user-bar{
+    float:right;
+    padding:5px;
+    display:flex;
+    background-color:rgba(1,1,1,.5);
+    border-radius:15px;
+    padding:0 0 0 15px;
+}
+
+#user-menu{
+    padding:0;
+    line-height:32px;
+    color:white;
+    font-size:.85em;
+}
+
+#user-bar-dropdown{
+    padding:2px;
+}
+
+#user-bar-avatar{
+    margin-left: 5px;
+    border-radius:15px;
+    border:1px solid black;
+}
+
+#nav-container-bottom{
+    padding-top:10px;
+    padding-bottom:5px;
+    width:100%;
+    background-color:#31343D;
+    overflow:auto;
+    z-index:10;
+
+}
+
+/* Footer */
+#footer-container{
+    width:100%;
+    color:white;
+    background-color:#31343D;
+    padding:7px;
+    font-size:.7em
+}
+

@@ -3,7 +3,6 @@
 @section('title', ' | New Post')
 
 @section('content')
-
     {{-- Print the bundles --}}
     <style>
         .bundle {
@@ -16,35 +15,17 @@
         {{-- Print the bundle title --}}
         <div style="width:100%;">
             <h4>
-
                 {{$bundle->name}}
-
-                <div>
-                    <table style="border:1px solid black;padding:10px;width:auto;" class="table table-sm">
-                        <tr>
-                            <td>Store</td>
-                            <td>
-                                {!! $bundle->stores->name !!}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Started</td>
-                            <td>
-                                {!! $bundle->date_started == null ? "unknown" : \Carbon\Carbon::parse($bundle->date_started)->diffForHumans()!!}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ended</td>
-                            <td>
-                                {!! $bundle->date_ended == null ? "unknown" : \Carbon\Carbon::parse($bundle->date_ended)->diffForHumans()!!}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-
                 <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#bundle-modal">
                     Add to Purchases
+                </button>
+
+                <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#add-game-modal">
+                    Add a game
+                </button>
+
+                <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#bulk-import-modal">
+                    Bulk Importer
                 </button>
             </h4>
         </div>
@@ -89,7 +70,7 @@
                             >
                         </div>
                         <div class="card-img-overlay">
-
+                            <form method="POST" action="{{route("bundle.change_tier")}}">
                                 {!! csrf_field() !!}
                                 <input type="hidden" name="bundle_game_id" value="{!! $game->pivot->id !!}">
 
@@ -99,6 +80,23 @@
                                     {!! $game->name !!}
                                 </a>
 
+                                <br>
+
+                                <span style="background-color:rgba(1,1,1,.6);color:white;font-size:1.4em;padding:5px;">
+                                    <button name="new_tier" value="{{$i - 1}}" class="empty-button">
+                                        {!! App\Icon::find("arrow-up")->wrap(["color" => "white"]) !!}
+                                    </button>
+
+                                    <button name="new_tier" value="{{$i + 1}}" class="empty-button">
+                                        {!! App\Icon::find("arrow-down")->wrap(["color" => "white"]) !!}
+                                    </button>
+
+                                    <button name="new_tier" value="0" class="empty-button">
+                                        {!! App\Icon::find("trash")->wrap() !!}
+                                    </button>
+                                </span>
+                                <p class="card-text"></p>
+                            </form>
                         </div>
                     </div>
                 @endforeach

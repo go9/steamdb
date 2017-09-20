@@ -25,4 +25,36 @@
             @endif
         </form>
     </div>
+
+
+    @php($isEnabled = Auth::check() && Auth::user()->checkSteam())
+
+    <div class="card" style="margin-top:15px;padding:15px;">
+        <h4 class="card-title">
+            Steam Settings
+            {!! App\Icon::find("circle")->wrap(["color" => $isEnabled ? "green" : "red"]) !!}
+        </h4>
+        <form class="form" method="POST" action="{!! route("settings.toggle_g2a") !!}">
+            {{ csrf_field() }}
+            <input type="hidden" name="user_id" value="{!! Auth::user()->id !!}">
+            {{-- Check if the user has access --}}
+            @if($isEnabled)
+                <button class="btn btn-danger col-xs-12 col-lg-3 col-xl-2">Unlink Steam Account</button>
+            @else
+                <div class="alert alert-warning" style="width:100%;">
+                    <strong>Caution!</strong>
+                    You will be redirected to Steam.
+                </div>
+
+                    <a class="btn btn-primary col-xs-12 col-lg-3 col-xl-2" href="/auth/steam/handle">
+                        Sign into Steam
+                    </a>
+
+            @endif
+        </form>
+    </div>
+
+
+
+
 @endsection

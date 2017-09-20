@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Session;
 use Invisnik\LaravelSteamAuth\SteamAuth;
 use App\User;
 use Auth;
@@ -50,47 +51,50 @@ class AuthController extends Controller
      */
     public function handle()
     {
-        if($this->steam->steamId != null){
-            dd($this->steam);
-        }
-
+        // Check if the user just validated their info
         if ($this->steam->validate()) {
+
+            // Get the info
             $info = $this->steam->getUserInfo();
 
-            if (!is_null($info)) {
-                $user = $this->findOrNewUser($info);
 
-                Auth::login($user, true);
+            if($info){
+                // Check if steam is account is already linked to local account
+                if($user = User::where('steamid', $info->steamID64)->first()){
 
-                return redirect($this->redirectURL); // redirect to site
+                    // Check if the user is currently logged in and the accounts match
+                    if(Auth::check()){
+                        if($user->id != Auth::user()->id){
+                            Session::flash("message-danger", "Another user is already synced with this Steam account.");
+                            return redirect("settings/connections");
+                        }
+                    }
+
+                    // The user is trying to log in
+                    Auth::login($user);
+                    return redirect($this->redirectURL); // redirect to site
+                }
+                else{
+                    // the user is signing up
+                    // Check if the user is currently logged in
+                    if(Auth::check()){
+                        // the user is syncing their steam account to their local account
+                        $user = Auth::user();
+                        $user->steamid = $info->steamID64;
+                        $user->avatar = $info->avatar;
+                        $user->save();
+
+                        return redirect("settings/connections");
+                    }
+                    else{
+                        return view("auth.register")->withInfo($info);
+                    }
+
+                }
             }
         }
-
         return $this->redirectToSteam();
     }
 
-    /**
-     * Getting user by info or created if not exists
-     *
-     * @param $info
-     * @return User
-     */
-    protected function findOrNewUser($info)
-    {
 
-        $user = User::where('steamid', $info->steamID64)->first();
-
-        if (!is_null($user)) {
-            return $user;
-        }
-
-        $user = new User();
-        $user->name = $info->realname;
-        $user->email = $info->personaname;
-        $user->steamid = $info->steamID64;
-        $user->avatar = $info->avatar;
-
-        $user->save();
-        return $user;
-    }
 }

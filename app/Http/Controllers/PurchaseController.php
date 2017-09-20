@@ -118,7 +118,7 @@ class PurchaseController extends Controller
     {
         $this->validate($request, [
             "purchase_id" => "required|numeric",
-            "price_paid" => "required|numeric",
+            "price_paid" => "required_without:price_sold|numeric",
             "price_sold" => "required_without:price_paid|numeric",
         ]);
 
@@ -136,7 +136,7 @@ class PurchaseController extends Controller
     {
         $this->validate($request, [
             "game_purchase_id" => "required|numeric",
-            "price_paid" => "required|numeric",
+            "price_paid" => "required_without:price_sold|numeric",
             "price_sold" => "required_without:price_paid|numeric",
         ]);
 
@@ -147,7 +147,7 @@ class PurchaseController extends Controller
             DB::update("update game_purchase set price_sold = ? where id = ? ", [$request->price_sold, $request->game_purchase_id]);
         }
 
-        return true;
+        return ["success" => true];
     }
 
     /**

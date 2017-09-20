@@ -1,5 +1,4 @@
 @extends('main')
-
 @section('content')
     <!-- Check if this game is missing -->
     @if($game == null)
@@ -8,15 +7,11 @@
         </div>
     @else
 @section('title', " | $game->name")
-<div class="container-fluid">
-    <!-- Display Action button for users who are logged in -->
-    <div style="width:100%;clear:both;"></div>
-
-    <!-- Set up main container -->
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-10 col-xl-8" style="margin:0 auto;">
+<div class="container">
         <div class="row">
             <!-- title -->
-            <div class="col-12" id="game-title" style="font-size:2em;margin-bottom:20px;">
+            <div class="col-12">
+                <span class="game-title">
                 @if(Auth::user())
                     @if(Auth::user()->isIn($game->id, "inventory"))
                         {!! App\Icon::find("archive")->wrap() !!}
@@ -27,6 +22,7 @@
                     @endif
                 @endif
                 {{$game->name}}
+                </span>
             </div>
             <hr>
             <!-- set up content top panel-->
@@ -109,6 +105,7 @@
             </div> <!-- End content-main-->
             <!-- set up sidebar panel-->
             <div class="col-xs-12 col-lg-6" id="content-sidebar" style="margin-top:15px;">
+
             @if(Auth::check() && Auth::user()->checkRole("G2a"))
                 <!-- Display G2A Pricing-->
                     <div>
@@ -200,11 +197,15 @@
                                     <strong>No G2A Match</strong> Manually adding games is currently not available.
                                 </div>
                             @endif
+                            <hr>
                         </div>
                         @endif
                     </div>
                 @endif
+
             </div>
+            <div style="width:100%;"></div>
+
             <!-- set up content bottom panel-->
             <div class="col-xs-12 col-lg-6" id="content-main" style="">
                 {{-- Display The games steam info--}}
@@ -335,7 +336,7 @@
                 </div>
             </div>
         </div>
-    </div>
+
 </div>
 @endif
 @endsection

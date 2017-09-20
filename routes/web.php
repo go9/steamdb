@@ -39,7 +39,7 @@ Route::post('/bundles/change_tier','BundleController@changeTier')->name("bundle.
 Route::post('/bundles/link_game_bundle', 'BundleController@linkGameToBundle')->name("bundle.link_game_bundle");
 
 Route::get("/settings", "SettingsController@index");
-Route::get("settings/g2a", "SettingsController@showG2aSettings");
+Route::get("settings/connections", "SettingsController@showConnections");
 Route::post("settings/toggle_g2a", "SettingsController@toggleG2a")->name("settings.toggle_g2a");
 Route::get("settings/g2a_auto_matcher", "GameController@g2aAutoMatcher");
 Route::get("settings/g2a_price_updater", "SettingsController@g2aPriceUpdater");

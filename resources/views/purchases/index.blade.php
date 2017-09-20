@@ -2,17 +2,6 @@
 @section('title')
 
 @section('content')
-
-    <style>
-        .action-button {
-            background: transparent;
-            border: none;
-            float: left;
-            margin: 0;
-            cursor: pointer;
-        }
-    </style>
-
     <!-- New Purchase Modal-->
     <div class="modal fade"
          id="new-purchase-modal"
@@ -121,15 +110,6 @@
         </button>
     </div>
 
-    <!-- Bulk Edit-->
-    <form id="action-form">
-        <select class="form-control" style="width:auto;" name="action" onchange="$('#action-form').submit();">
-            <option hidden>Bulk Edit</option>
-            <option value="delete">Delete</option>
-            <option value="move">Move</option>
-            <option>Reset</option>
-        </select>
-    </form>
 
     <script>
 
@@ -187,12 +167,25 @@
 
 
 
-    <table class="table table-sm table-responsive table-hover" id="purchases-table"
-           style="margin:15px;overflow-y:visible;overflow-x:scroll;padding-bottom:200px;">
+    <div style="width:100%;">
+        <!-- Bulk Edit-->
+        <form id="action-form">
+            <select  style="" name="action" onchange="$('#action-form').submit();">
+                <option hidden>Bulk</option>
+                <option value="delete">Delete</option>
+                <option value="move">Move</option>
+                <option>Reset</option>
+            </select>
+        </form>
+
+    <table class="table table-responsive table-sm table-hover" id="purchases-table"
+           style="overflow-x:auto;overflow-y:hidden;padding-bottom:200px;">
         <thead id="purchase-table-thead">
         <tr>
             <th>
-                <div style="width:10px;"></div>
+                <div style="width:10px;">
+
+                </div>
             </th>
             <th>
                 <div style="width:10px;"></div>
@@ -215,23 +208,24 @@
         </tr>
         </thead>
     </table>
-
+    </div>
     <script>
-        console.log($("#purchases-table").children());
-
-
         resize();
-
         $(window).resize(function () {
             resize();
         });
 
         function resize() {
-            var width = $(window).width() - (
-                    $("#purchase-table-thead").width() - $("#table-name").width()
-                );
+            console.log("Content container: " + $("#content-container").width());
+            console.log("Purchase Table Thead: " + $("#purchase-table-thead").width());
+            console.log("table name: " +  $("#table-name").width());
 
-            $("#table-name").css("width", width * .9);
+            var width =
+                $("#content-container").width()
+                - ($("#purchase-table-thead").width() - $("#table-name").width())
+                - (15*7);
+
+            $("#table-name").css("width", width);
         }
     </script>
 
@@ -310,7 +304,7 @@
 
             // Create row
             var tr = $("<tr>", {
-                bgcolor: "bisque"
+                bgcolor: "#d0ced0"
             });
 
             // Add Tools
@@ -358,7 +352,7 @@
             div.append(
                 $("<button/>", {
                     html: (new Icon("plus")).wrap({"title": "Add Game"}),
-                    class: "action-button",
+                    class: "btn-empty",
                     "data-toggle": "modal",
                     "data-target": "#add-game-modal",
                     "data-from": purchase.id,
@@ -369,7 +363,7 @@
             div.append(
                 $("<button/>", {
                     html: (new Icon("plus-circle")).wrap({"title": "Add Games"}),
-                    class: "action-button",
+                    class: "btn-empty",
                     "data-toggle": "modal",
                     "data-target": "#bulk-import-modal",
                     "data-from": purchase.id,
@@ -380,7 +374,7 @@
             div.append(
                 $("<button/>", {
                         html: (new Icon("trash")).wrap({"title": "Delete", "color": "red"}),
-                        class: "action-button",
+                        class: "btn-empty",
                         click: function () {
                             $.ajax({
                                 url: ('/purchases/' + purchase.id),
@@ -478,7 +472,7 @@
                 // Add Actions
                 tr.append(
                     $("<td>", {
-                        html: "Actions"
+                        html: ""
                     })
                 );
 
@@ -513,19 +507,17 @@
                     class: "form-control input-sm"
                 });
 
+
             var button =
                 $("<button>", {
                     text: "Update",
-                    style: "display:none;float:left;",
+                    style: "display:none;float:left;width:100%;",
                     class: "btn btn-secondary btn-sm",
                     click: function () {
                         // Toggle the views
                         price.toggle();
                         input.toggle();
                         button.toggle();
-
-                        // Update the price
-                        price.html(money(input.val()));
 
                         var url = "";
                         var data = {
@@ -548,20 +540,32 @@
                             data["price_paid"] = stripMoney(input.val());
                         }
 
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data: data,
-                            dataType: 'json',
-                            success: function (json, response, three) {
-                            },
-                            error: function (request, error) {
-                                alert("There was an error updating the games price. Please contact support or try again later.");
-                            }
-                        });
+                        // Update the price
+                        if(input.val() === "-"){
+                            price.html("-");
+                        }
+                        else{
+                            price.html(money(input.val()));
+
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: data,
+                                dataType: 'json',
+                                success: function (json, response, three) {
+                                },
+                                error: function (request, error) {
+                                    console.log(request);
+                                    alert("There was an error updating the games price. Please contact support or try again later.");
+                                }
+                            });
+                        }
+
+
 
                     }
                 });
+
 
             var td = $("<td>", {});
 
@@ -647,7 +651,7 @@
                         $("<button>", {
                             class: "btn dropdown-toggle badge-" + style,
                             "data-toggle": "dropdown",
-                            style: "padding:5px;color:white;"
+                            style: "padding:0px;color:white;"
                         })
                     );
             pill.append(dropdown);

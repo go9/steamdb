@@ -685,8 +685,6 @@ class GameController extends Controller
         ];
     }
 
-    // Unused crud (for now)
-
     public function create()
     {
         return view("games.create");
@@ -714,6 +712,4 @@ class GameController extends Controller
 
         return back();
     }
-
-
 }

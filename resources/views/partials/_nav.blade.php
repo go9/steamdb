@@ -1,84 +1,26 @@
-<nav class="navbar sticky-top navbar-toggleable-md navbar-light bg-faded" style="background-color:rgba(200,211,213)" ;>
-
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <a class="navbar-brand" href="/">
-        <img class='img-responsive' style='height:60px;filter: invert(1);' src="../images/logo.png"/>
-    </a>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class='nav-item'>
-                <a class="nav-link" id='nav-item-library' href="/library">
-                    <strong>Library</strong>
+<div id="nav-container-top">
+    <div class="container">
+        <div class="row" style="padding-top:15px;">
+            <!-- Display logo -->
+            <div class="col-6">
+                <a href="/">
+                    <img id="nav-logo" class='img-responsive' src="../images/logo.png"/>
                 </a>
-            </li>
+            </div>
 
-            <li class='nav-item'>
-                <a class="nav-link" id='nav-item-inventory' href="/inventory">
-                    <strong>Inventory</strong>
-                </a>
-            </li>
-
-            <li class='nav-item'>
-                <a class="nav-link" id='nav-item-purchases' href="/purchases">
-                    <strong>Purchases</strong>
-                </a>
-            </li>
-
-            <li class='nav-item'>
-                <a class="nav-link" id='nav-item-bundles' href="/bundles">
-                    <strong>Bundles</strong>
-                </a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-
-            <li class="nav-item">
-            @if(Auth::check())
-                <!-- User is logged in -->
-                    <div>
-                        {{-- Check if user logged in through steam--}}
-                        @if(Auth::user()->checkSteam())
-                            <div style="height:40px;">
-                                <div style="float:left;width:20%;">
-                                    <img style="height:100%;" src="{!! Auth::user()->avatar !!}">
-                                </div>
-                                <div style="float:left;width:70%;margin-left:10%;">
-                                    <div class="dropdown">
-                                        <button class="btn btn-empty dropdown-toggle"
-                                                type="button"
-                                                id="user-menu"
-                                                data-toggle="dropdown"
-                                                aria-haspopup="true"
-                                                aria-expanded="false"
-                                                style="height:100%;line-height:50%;">
-                                            {{Auth::user()->name}}
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="user-menu">
-                                            <a class="dropdown-item" href="/settings">Settings</a>
-                                            <form method="post" action="{!!route("logout") !!}">
-                                                {{ csrf_field() }}
-                                                <button class="dropdown-item">Logout</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="dropdown">
-                                <button class="btn btn-empty dropdown-toggle"
-                                        type="button"
-                                        id="user-menu"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="false">
-                                    {{  Auth::user()->email }}
+            <!-- Display user bar/login button -->
+            <div class="col-6">
+                @if(Auth::check())
+                    <!-- User is logged in -->
+                        <div id="user-bar">
+                            <div id="user-bar-dropdown" class="dropdown">
+                                <button id="user-menu" class="btn btn-empty dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{Auth::user()->name}}
+                                    @if(Auth::user()->checkSteam())
+                                        {!! App\Icon::find("check")->wrap(["color" => "#90C2E7", "title" => "Verified with Steam"]) !!}
+                                    @endif
                                 </button>
+
                                 <div class="dropdown-menu" aria-labelledby="user-menu">
                                     <a class="dropdown-item" href="/settings">Settings</a>
                                     <form method="post" action="{!!route("logout") !!}">
@@ -87,29 +29,56 @@
                                     </form>
                                 </div>
                             </div>
-                        @endif
-                    </div>
+                            <img id="user-bar-avatar" src="{!! Auth::user()->avatar !!}">
+                        </div>
+                @else
+                    <!-- User is not logged in -->
+                        <div id="nav-login">
+                            <a class='btn btn-empty' href="{{route('login')}}" style="color:white;">
+                                {!! App\Icon::find("user")->wrap(["color" => "white"]) !!} login
+                            </a>
+                        </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 
-            @else
-            <!-- User is not logged in -->
-            <a class='btn btn-primary' href="{{route('login')}}" style="margin:3px;">
-                Login
+<nav id="nav-container-bottom" class="sticky-top">
+    <div class="container" style="display:block;white-space:nowrap;">
+        <div class='menu-item'>
+            <div style="height:5px;width:100%;background-color:{!! App\Icon::find("book")->default_color !!};"></div>
+            <a class="nav-link" id='nav-item-library' href="/library">
+                {!! App\Icon::find("book")->wrap() !!}
+                <strong>Library</strong>
             </a>
-            @endif
-            </li>
-        </ul>
+        </div>
+
+        <div class='menu-item' id="main-nav-inventory">
+            <div style="height:5px;width:100%;background-color:{!! App\Icon::find("archive")->default_color !!};"></div>
+
+            <a class="nav-link" id='nav-item-inventory' href="/inventory">
+                {!! App\Icon::find("archive")->wrap() !!}
+                <strong>Inventory</strong>
+            </a>
+        </div>
+
+        <div class='menu-item'>
+            <div style="height:5px;width:100%;background-color:transparent;"></div>
+            <a class="nav-link" id='nav-item-purchases' href="/purchases">
+                <strong>Purchases</strong>
+            </a>
+        </div>
+
+        <div class='menu-item'>
+            <div style="height:5px;width:100%;background-color:transparent;"></div>
+            <a class="nav-link" id='nav-item-bundles' href="/bundles">
+                <strong>Bundles</strong>
+            </a>
+        </div>
     </div>
 </nav>
 
-<form action="/games" method="GET">
-    <div id="menu-searchbar" class="col-sm-12 col-md-8 col-lg-6 input-group"
-         style="float:right;margin-top:5px;margin-bottom:5px;">
-        <input class="form-control" type="text" name="keywords" placeholder="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-    </div>
-</form>
-
-<div style="width:100%;height:1px;clear:both;margin-bottom:15px;"></div>
 
 @if(strpos(url()->current(), "library") !== false)
     <script> $("#nav-item-library").addClass("active"); </script>

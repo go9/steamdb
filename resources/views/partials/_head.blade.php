@@ -13,35 +13,22 @@
         crossorigin="anonymous"></script>
 
 <!-- Bootstrap 4 -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
-      integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
-        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
-        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
-        crossorigin="anonymous"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
 <!-- Bootstrap 4 Theme
-<link rel="stylesheet" href="https://bootswatch.com/4-alpha/lux/bootstrap.min.css">-->
+<link rel="stylesheet" href="https://bootswatch.com/yeti/bootstrap.min.css">-->
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Fjalla+One|Ubuntu" rel="stylesheet">
 
 <!-- Google Charts -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-
-<!-- Stylesheets-->
-<link rel="stylesheet" href="/css/normalize.css">
-<link rel="stylesheet" href="/css/styles.css">
 
 <!-- Lightbox -->
 <link rel="stylesheet" href="/lightslider/src/css/lightslider.css">
@@ -50,7 +37,12 @@
 <!-- Light Gallery -->
 <link rel="stylesheet" href="/lightgallery/src/css/lightgallery.css">
 <script src="/lightgallery/src/js/lightgallery.js"></script>
-<script src="https://cdn.jsdelivr.net/g/lg-fullscreen@1.0.1(lg-fullscreen.js),lg-thumbnail@1.0.3(lg-thumbnail.js),lg-video@1.0.1(lg-video.js),lg-zoom@1.0.4(lg-zoom.js)"></script>
+<script src="/lightgallery/src/js/extensions.js"></script>
+
+<!-- Stylesheets-->
+<link rel="stylesheet" href="/css/normalize.css">
+<link rel="stylesheet" href="/css/bootstrap_override.css">
+<link rel="stylesheet" href="/css/styles.css">
 
 
 <script>
@@ -67,7 +59,6 @@
             return true;
         }
     }
-
     function stripMoney(n){
         return parseFloat(
             (n + "").replace(/[^\d.-]/g, '')
@@ -110,14 +101,3 @@
 
     }
 </script>
-
-
-<style>
-    .btn-empty{
-        margin:0;
-        padding:0;
-        background:none;
-        border: none;
-    }
-    .btn-empty:focus {outline:0;}
-</style>
