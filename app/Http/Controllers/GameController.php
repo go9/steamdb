@@ -195,7 +195,15 @@ class GameController extends Controller
 
     public function show($id)
     {
-        return view("games.show")->withGame(Game::find($id));
+        $game = Game::find($id);
+
+        // Check if g2a is matched
+        if($game->g2a == null)
+        {
+            $this->g2aAutoMatch([$game]);
+        }
+
+        return view("games.show")->withGame($game);
     }
 
     public function index()
@@ -276,20 +284,25 @@ class GameController extends Controller
 
         //ini_set('memory_limit', '-1');
 
+        $data = $this->g2aAutoMatch(Game::whereNull("g2a_id")->where("public",1)->get());
+
+        return view("settings.g2a_auto_matcher")->withData($data);
+    }
+
+    public function g2aAutoMatch($games){
         $data = [
             "matched" => [],
             "unmatched" => [],
             "failure" => []
         ];
 
-        $games = Game::whereNull("g2a_id")->where("public",1)->get();
         foreach($games as $game){
             console($game);
 
             if ($game == null) {
                 $data["error"][] = $game->id;
                 continue;
-             }
+            }
 
             // Search G2a For any matches
             $results = resolve("App\External\G2aApi")->searchByPhrase($game->name);
@@ -303,7 +316,7 @@ class GameController extends Controller
             }
         }
 
-        return view("settings.g2a_auto_matcher")->withData($data);
+        return $data;
     }
 
     public function g2aUpdatePrice(Request $request)
