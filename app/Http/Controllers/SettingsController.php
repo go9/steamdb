@@ -62,7 +62,7 @@ class SettingsController extends Controller
 
     public function g2aAutoMatcher(){
 
-        //ini_set('memory_limit', '-1');
+        ini_set('memory_limit', '-1');
 
         return view("settings.g2a_auto_matcher")->withGames(Game::whereNull("g2a_id")->where("public",1)->get());
     }
