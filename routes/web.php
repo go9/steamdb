@@ -22,6 +22,7 @@ Route::get('/search', 'GameController@search');
 Route::get('/games/sync_applist_from_steam', 'GameController@SyncApplistTest');
 Route::get('/games/store/{id}', 'GameController@storeGame');
 Route::get('/games/store_package/{id}', 'GameController@storePackage');
+Route::post('/games/auto_match', 'GameController@g2aAutoMatcher');
 Route::resource('games', 'GameController');
 
 Route::resource('purchases', 'PurchaseController');
@@ -41,7 +42,7 @@ Route::post('/bundles/link_game_bundle', 'BundleController@linkGameToBundle')->n
 Route::get("/settings", "SettingsController@index");
 Route::get("settings/connections", "SettingsController@showConnections");
 Route::post("settings/toggle_g2a", "SettingsController@toggleG2a")->name("settings.toggle_g2a");
-Route::get("settings/g2a_auto_matcher", "GameController@g2aAutoMatcher");
+Route::get("settings/g2a_auto_matcher", "SettingsController@g2aAutoMatcher");
 Route::get("settings/g2a_price_updater", "SettingsController@g2aPriceUpdater");
 Route::post("settings/g2a_update_price", "GameController@g2aUpdatePrice");
 Route::get("settings/myaccount", "SettingsController@showMyAccount");
