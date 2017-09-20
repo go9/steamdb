@@ -34,7 +34,7 @@
             $("#stop").show();
 
             interval = setInterval(function () {
-                updateGame(games[counter].id);
+                updateGame(games[counter]);
                 counter++;
             }, 0);
         });
@@ -108,5 +108,4 @@
 
         }
     </script>
-
 @endsection
