@@ -293,10 +293,20 @@ class GameController extends Controller
 
 
         if($this->g2aAutoMatch($game) == false){
-            return ["success" => false, "code" => 2, "message" => "No match found", "data" => ["game" => $game]];;
+            return ["success" => false, "code" => 2, "message" => "No match found", "data" => ["game" => [
+                "id" => $game->id,
+                "name" => $game->name,
+                "type" => $game->type,
+                "g2a_id" => $game->g2a_id
+            ]]];;
         }
         else{
-            return ["success" => true, "data" => ["game" => $game]];
+            return ["success" => true, "data" => ["game" => [
+                "id" => $game->id,
+                "name" => $game->name,
+                "type" => $game->type,
+                "g2a_id" => $game->g2a_id
+            ]]];
         }
 
         }

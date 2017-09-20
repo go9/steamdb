@@ -60,6 +60,7 @@
                 dataType : 'json',
                 async: false,
                 success: function (json, response) {
+                    console.log(json);
                     if(json.success === false){
                         // Game not found
                         if(json.code == 1){
