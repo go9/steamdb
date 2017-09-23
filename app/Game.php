@@ -75,7 +75,9 @@ class Game extends Model
     }
 
     public function headerImage(){
+
         $headerImage = $this->images->where("type","header_image")->first();
+
         if($headerImage == null){
             $headerImage = new Image();
             $headerImage->url = "../images/empty_banner.gif";

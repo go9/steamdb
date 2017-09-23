@@ -60,11 +60,20 @@ class GameSearch
     public function searchBy($categories)
     {
 
-        // Exceptions
-        if (isset($categories["page"])) {
-            unset($categories["page"]);
-        }
+        $allowed = [
+            "keywords",
+            "types",
+            "genres",
+            "languages",
+            "developers",
+            "publishers",
+            "categories",
+            "languages",
+        ];
 
+        $skipped = [];
+
+        // Exceptions
         if (isset($categories["sorting"])) {
             $sorting = $categories["sorting"];
             unset($categories["sorting"]);
@@ -78,6 +87,11 @@ class GameSearch
         }
 
         foreach ($categories as $key => $items) {
+            if(!in_array($key, $allowed)){
+                $skipped[] = $key;
+                continue;
+            }
+
             if ($key == "keywords" && $key != "") {
 
                 // Check if string contains anything
@@ -196,12 +210,6 @@ class GameController extends Controller
     public function show($id)
     {
         $game = Game::find($id);
-
-        // Check if g2a is matched
-        if($game->g2a == null)
-        {
-            $this->g2aAutoMatch([$game]);
-        }
 
         return view("games.show")->withGame($game);
     }
@@ -325,9 +333,6 @@ class GameController extends Controller
                 return false;
             }
         }
-
-
-
 
     public function g2aUpdatePrice(Request $request)
     {
