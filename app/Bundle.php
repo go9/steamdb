@@ -15,4 +15,14 @@ class Bundle extends Model
     public function stores(){
         return $this->belongsTo('App\Store', "store_id", "id");
     }
+
+    public function tiers(){
+        $gamesByTier = [];
+        foreach($this->games as $bundleItem){
+            $gamesByTier[$bundleItem->pivot->tier][] = $bundleItem;
+        }
+
+        ksort($gamesByTier);
+        return $gamesByTier;
+    }
 }

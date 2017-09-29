@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use App\Bundle;
 use App\Game;
@@ -61,7 +62,13 @@ class BundleController extends Controller
      */
     public function show($id)
     {
-        return view('bundles.bundle')->withBundle(Bundle::find($id));
+        $bundle = Bundle::find($id);
+        if($bundle == null){
+            Session::flash("message-danger", "The bundle was not found.");
+            return Redirect::route("bundles.index");
+        }
+
+        return view('bundles.show')->withBundle($bundle);
     }
 
     /**
@@ -72,7 +79,7 @@ class BundleController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view("bundles.edit")->withBundle(Bundle::find($id));
     }
 
     /**

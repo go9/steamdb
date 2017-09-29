@@ -1,52 +1,33 @@
 @extends('main')
 
-@section('title', ' | New Post')
+@section('title', ' | Edit Bundle')
 
 @section('content')
-    {{-- Print the bundles --}}
-    <style>
-        .bundle {
-            margin: 10px;
-            padding: 15px;
-        }
-    </style>
 
-    <div class="row bundle">
-        {{-- Print the bundle title --}}
-        <div style="width:100%;">
-            <h4>
-                {{$bundle->name}}
-                <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#bundle-modal">
-                    Add to Purchases
-                </button>
 
-                <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#add-game-modal">
-                    Add a game
-                </button>
+    @section('actionbar-contents')
+        <button class="dropdown-item" type="button" data-toggle="modal" data-target="#bundle-modal">
+            Add to Purchases
+        </button>
+        <button class="dropdown-item" type="button" data-toggle="modal" data-target="#add-game-modal">
+            Add a game
+        </button>
+        <button class="dropdown-item" type="button" data-toggle="modal" data-target="#bulk-import-modal">
+            Bulk Importer
+        </button>
 
-                <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#bulk-import-modal">
-                    Bulk Importer
-                </button>
-            </h4>
-        </div>
+        <button class="dropdown-item" href="/bundles/{!! $bundle->id !!}" >
+            View Bundle
+        </button>
 
+        <script>$("#action-bar").show()</script>
+    @endsection
+
+
+
+    <div class="row">
         {{-- Print the games --}}
-        @php
-            $tierMax = 1;
-            $gamesByTier = [];
-            foreach($bundle->games as $bundleItem){
-                // Look for the max tier
-                if($bundleItem->pivot->tier > $tierMax){
-                  $tierMax = $bundleItem->pivot->tier;
-                }
-
-                // Add to games
-                $gamesByTier[$bundleItem->pivot->tier][] = $bundleItem;
-            }
-            ksort($gamesByTier);
-        @endphp
-
-        @foreach($gamesByTier as $i => $tier)
+        @foreach($bundle->tiers() as $i => $tier)
             @if(sizeof($tier) > 0)
                 <div style="width:100%;">
                     <h5 class="card-title">
@@ -54,18 +35,11 @@
                     </h5>
                 </div>
                 @foreach($tier as $game)
-                    @php
-                        // Get banner url
-                        $image = $game->images->where("type","header_image")->first();
-                        $image = $image == null
-                            ? "http://cdn.akamai.steamstatic.com/steam/apps/10/header.jpg?t=1447887426"
-                            : $image->url;
-                    @endphp
                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" style="padding:0px;">
                         <div class="card">
                             <img class="card-img"
                                  style="width:100%;height:auto;"
-                                 src="{!! $image !!}"
+                                 src="{!! $game->headerImage()->url !!}"
                                  alt="Card image cap"
                             >
                         </div>
@@ -83,15 +57,15 @@
                                 <br>
 
                                 <span style="background-color:rgba(1,1,1,.6);color:white;font-size:1.4em;padding:5px;">
-                                    <button name="new_tier" value="{{$i - 1}}" class="empty-button">
+                                    <button name="new_tier" value="{{$i - 1}}" class="btn-empty">
                                         {!! App\Icon::find("arrow-up")->wrap(["color" => "white"]) !!}
                                     </button>
 
-                                    <button name="new_tier" value="{{$i + 1}}" class="empty-button">
+                                    <button name="new_tier" value="{{$i + 1}}" class="btn-empty">
                                         {!! App\Icon::find("arrow-down")->wrap(["color" => "white"]) !!}
                                     </button>
 
-                                    <button name="new_tier" value="0" class="empty-button">
+                                    <button name="new_tier" value="0" class="btn-empty">
                                         {!! App\Icon::find("trash")->wrap() !!}
                                     </button>
                                 </span>
@@ -103,9 +77,21 @@
             @endif
         @endforeach
     </div>
+    </div>
+
+    <!-- Bulk Import Modal -->
+    @include("games.bulk_import")
+
+    <!-- Add game to bundle Modal -->
+    @include("games.game_import")
+
 
     <script>
-        function linkGamesToBundle(gameids, tier = 1){
+        function processImport(result) {
+            linkGamesToBundle(result);
+        }
+
+        function linkGamesToBundle(gameids, tier = 1) {
             $.ajax({
                 url: '/bundles/link_game_bundle',
                 type: 'POST',
@@ -123,19 +109,6 @@
                     console.log(request);
                 }
             });
-        }
-    </script>
-    <!-- Bulk Import Modal -->
-    @include("games.bulk_import")
-
-
-    <!-- Add game to bundle Modal -->
-    @include("games.game_import")
-
-
-    <script>
-        function processImport(result) {
-            linkGamesToBundle(result);
         }
     </script>
 
@@ -169,7 +142,7 @@
                             <label for="example-email-input" class="col-2 col-form-label">Tier Purchased</label>
                             <div class="col-10">
                                 <select id="purchase-tier" name="tier_purchased" class="form-control">
-                                    @for($i = 1; $i <= $tierMax; $i++)
+                                    @for($i = 1; $i <= count($bundle->tiers()); $i++)
                                         <option value="{!! $i !!}">Tier {!! $i !!}</option>
                                     @endfor
                                 </select>
@@ -205,6 +178,6 @@
         </div>
     </div>
 
-
-
 @endsection
+
+

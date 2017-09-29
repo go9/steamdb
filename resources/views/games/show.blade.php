@@ -1,27 +1,37 @@
 @extends('main')
-@section('content')
-    <!-- Check if this game is missing -->
-    @if($game == null)
-        <div class="alert alert-danger">
-            <strong>Error!</strong> Game not found
-        </div>
-    @else
+
 @section('title', " | $game->name")
-<div class="container">
+
+@section('content')
+
+    @if(Auth::check())
+        @section('actionbar-contents')
+            <button class="dropdown-item" type="button" data-toggle="modal" data-target="#bundle-modal">
+                Add to Purchases
+            </button>
+
+            @if(Auth::user()->checkRole("admin"))
+            @endif
+
+            <script>$("#action-bar").show()</script>
+        @endsection
+    @endif
+
+    <div class="container">
         <div class="row">
             <!-- title -->
             <div class="col-12">
-                <span class="game-title">
+                <span class="title">
                 @if(Auth::user())
-                    @if(Auth::user()->isIn($game->id, "inventory"))
-                        {!! App\Icon::find("archive")->wrap() !!}
-                    @endif
+                        @if(Auth::user()->isIn($game->id, "inventory"))
+                            {!! App\Icon::find("archive")->wrap() !!}
+                        @endif
 
-                    @if(Auth::user()->isIn($game->id, "library"))
-                        {!! App\Icon::where("name","Library")->first()->wrap() !!}
+                        @if(Auth::user()->isIn($game->id, "library"))
+                            {!! App\Icon::where("name","Library")->first()->wrap() !!}
+                        @endif
                     @endif
-                @endif
-                {{$game->name}}
+                    {{$game->name}}
                 </span>
             </div>
             <hr>
@@ -39,7 +49,7 @@
                     </div>
                 @endforeach
 
-                {{-- Display The games image--}}
+                {{-- Display The games images--}}
                 <div id="game_image" style="margin-top:15px;">
                     <ul id="lightSlider">
                         <li
@@ -124,81 +134,81 @@
 
                         @if(sizeof($data["prices"]) > 0)
                             <div style="border:1px solid black;padding:10px;">
-                            @if($g2a != null)
+                                @if($g2a != null)
 
 
-                                <div class="row">
-                                    <div class="col-12" style="text-align: center;">
-                                        <a href="http://www.g2a.com{{$g2a->slug}}"
-                                           target="_blank"
-                                           >
-                                            {!! $g2a->name !!}
-                                        </a>
+                                    <div class="row">
+                                        <div class="col-12" style="text-align: center;">
+                                            <a href="http://www.g2a.com{{$g2a->slug}}"
+                                               target="_blank"
+                                            >
+                                                {!! $g2a->name !!}
+                                            </a>
+                                        </div>
+
+                                        <div class="col-12" style="text-align: center;">
+                                            <span style="font-size: 2em;float:right;"
+                                              data-toggle="tooltip"
+                                              title="{!! \Carbon\Carbon::createFromTimeStamp(end($data["dates"]))->diffForHumans()!!}">
+                                                {{money(end($data["prices"]))}}
+                                            </span>
+                                        </div>
+                                        {{--
+                                        <div class="col-2">
+                                            <a href="http://www.g2a.com{{$g2a->slug}}"
+                                               target="_blank"
+                                               data-toggle="tooltip"
+                                               title="{!! $g2a->name !!}">
+                                                <img style="width:auto;height:58px;" src="{{$g2a->thumbnail}}">
+                                            </a>
+                                        </div>
+                                        --}}
                                     </div>
 
-                                    <div class="col-12" style="text-align: center;">
-                                    <span style="font-size: 2em;float:right;"
-                                          data-toggle="tooltip"
-                                          title="{!! \Carbon\Carbon::createFromTimeStamp(end($data["dates"]))->diffForHumans()!!}">
-                                            {{money(end($data["prices"]))}}
-                                        </span>
-                                    </div>
-                                    {{--
-                                    <div class="col-2">
-                                        <a href="http://www.g2a.com{{$g2a->slug}}"
-                                           target="_blank"
-                                           data-toggle="tooltip"
-                                           title="{!! $g2a->name !!}">
-                                            <img style="width:auto;height:58px;" src="{{$g2a->thumbnail}}">
-                                        </a>
-                                    </div>
-                                    --}}
-                                </div>
+                                    <hr>
 
+                                    <div id="myChart" style="clear:both;padding:1px;width:100%;"></div>
+                                    <div style="clear:both"></div>
+
+                                    <script>
+                                        var data = {!! json_encode($data) !!};
+
+                                        // Build array of data for chart
+                                        var chartData = [];
+                                        for (var i = 0; i < data.prices.length; i++) {
+                                            console.log("Adding: date->" + new Date(data.dates[i] * 1000) + " prices->" + data.prices[i]);
+                                            chartData.push(
+                                                [
+                                                    new Date(data.dates[i] * 1000),
+                                                    data.prices[i]
+                                                ]);
+                                        }
+                                        google.charts.load('current', {'packages': ['annotationchart']});
+                                        google.charts.setOnLoadCallback(drawChart);
+
+                                        function drawChart() {
+                                            var data = new google.visualization.DataTable();
+                                            data.addColumn('date', 'Date');
+                                            data.addColumn('number', 'G2A Price');
+                                            //data.addColumn('number', 'Steam Price');
+                                            data.addRows(chartData);
+                                            var chart = new google.visualization.AnnotationChart(document.getElementById('myChart'));
+
+                                            var options = {
+                                                displayAnnotations: true
+                                            };
+
+                                            chart.draw(data, options);
+                                        }
+
+                                    </script>
+                                @else
+                                    <div class="alert alert-info">
+                                        <strong>No G2A Match</strong> Manually adding games is currently not available.
+                                    </div>
+                                @endif
                                 <hr>
-
-                                <div id="myChart" style="clear:both;padding:1px;width:100%;"></div>
-                                <div style="clear:both"></div>
-
-                                <script>
-                                    var data = {!! json_encode($data) !!};
-
-                                    // Build array of data for chart
-                                    var chartData = [];
-                                    for (var i = 0; i < data.prices.length; i++) {
-                                        console.log("Adding: date->" + new Date(data.dates[i] * 1000) + " prices->" + data.prices[i]);
-                                        chartData.push(
-                                            [
-                                                new Date(data.dates[i] * 1000),
-                                                data.prices[i]
-                                            ]);
-                                    }
-                                    google.charts.load('current', {'packages': ['annotationchart']});
-                                    google.charts.setOnLoadCallback(drawChart);
-
-                                    function drawChart() {
-                                        var data = new google.visualization.DataTable();
-                                        data.addColumn('date', 'Date');
-                                        data.addColumn('number', 'G2A Price');
-                                        //data.addColumn('number', 'Steam Price');
-                                        data.addRows(chartData);
-                                        var chart = new google.visualization.AnnotationChart(document.getElementById('myChart'));
-
-                                        var options = {
-                                            displayAnnotations: true
-                                        };
-
-                                        chart.draw(data, options);
-                                    }
-
-                                </script>
-                            @else
-                                <div class="alert alert-info">
-                                    <strong>No G2A Match</strong> Manually adding games is currently not available.
-                                </div>
-                            @endif
-                            <hr>
-                        </div>
+                            </div>
                         @endif
                     </div>
                 @endif
@@ -211,7 +221,26 @@
                 {{-- Display The games steam info--}}
                 <div id="game_info" style="margin-top:15px;">
                     <table id="game_info_table" class="table" style="width:100%;text-overflow:ellipsis;">
-
+                        @if(count($game->packages()) > 0)
+                            <tr>
+                                <td><strong>Packages</strong></td>
+                                <td>
+                                    @foreach($game->packages() as $package)
+                                        <a href="/games/{!! $package->id !!}"> {{$package->name}} </a> <br>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endif
+                        @if(count($game->bundles) > 0)
+                            <tr>
+                                <td><strong>Bundles</strong></td>
+                                <td>
+                                    @foreach($game->bundles as $bundle)
+                                        <a href="/bundles/{!! $bundle->id !!}"> {{$bundle->name}} </a> <br>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endif
                         {{-- Check if metacritic score exists--}}
                         @if($game->metacritics)
                             <tr>
@@ -237,10 +266,8 @@
                                 </td>
                             </tr>
                         @endif
-
                         {{-- Check if publishers exists--}}
                         @if($game->Publishers)
-
                             <tr>
                                 <td><strong>Publishers</strong></td>
                                 <td>
@@ -250,7 +277,6 @@
                                     @endforeach
                                 </td>
                             </tr>
-
                         @endif
                         {{-- Check if Categories exists--}}
                         @if($game->Categories)
@@ -337,8 +363,8 @@
             </div>
         </div>
 
-</div>
-@endif
+    </div>
+
 @endsection
 
 

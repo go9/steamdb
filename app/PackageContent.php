@@ -10,7 +10,6 @@ class PackageContent extends Model
 
     public function games()
     {
-
         return $this->belongsTo('App\Game', 'game_id', 'package_id');
     }
 }

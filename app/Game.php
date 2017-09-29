@@ -29,6 +29,15 @@ class Game extends Model
         return $this->belongsToMany('App\Store', 'game_store')->withPivot("price")->withTimestamps();
     }
 
+    public function getNewestG2aPriceAttribute(){
+        if(($price = $this->prices->sortByDesc("created_at")->first())){
+            return $price->pivot->price;
+        }
+        else{
+            return false;
+        }
+    }
+
     public function purchases()
     {
         return $this->belongsToMany('App\Purchase');
@@ -88,6 +97,20 @@ class Game extends Model
     public function packageContents()
     {
         return $this->hasMany('App\PackageContent', 'package_id');
+    }
+
+    public function packages(){
+        return Game::where(
+            "public", "1")
+            ->whereIn("id", PackageContent::where("content_id", $this->id)->pluck("package_id")->toArray())
+            ->get();
+    }
+
+    public function dlc(){
+        return Game::where(
+            "public", "1")
+            ->where()
+            ->get();
     }
 
 

@@ -55,7 +55,7 @@ Route::get('auth/steam/handle', 'AuthController@handle')->name('auth.steam.handl
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 Auth::routes();
 
-//Route::get("/", "GameController@index");
-Route::get("/", "GameController@home");
+Route::get("/", "GameController@index");
+//Route::get("/", "GameController@home");
 
 

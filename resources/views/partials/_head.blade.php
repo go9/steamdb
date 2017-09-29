@@ -19,13 +19,13 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
 <!-- Bootstrap 4 Theme
-<link rel="stylesheet" href="https://bootswatch.com/yeti/bootstrap.min.css">-->
+<link rel="stylesheet" href="https://bootswatch.com/lumen/bootstrap.css">-->
 
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css?family=Fjalla+One|Ubuntu" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Fjalla+One|Ubuntu|Signika" rel="stylesheet">
 
 <!-- Google Charts -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

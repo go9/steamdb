@@ -34,7 +34,7 @@ class GameSearch
     public $results = null;
 
     // Options
-    public $perPage = 10;
+    public $perPage = 12;
 
     public function __construct($query = null)
     {
@@ -59,7 +59,6 @@ class GameSearch
 
     public function searchBy($categories)
     {
-
         $allowed = [
             "keywords",
             "types",
@@ -70,10 +69,8 @@ class GameSearch
             "categories",
             "languages",
         ];
-
         $skipped = [];
 
-        // Exceptions
         if (isset($categories["sorting"])) {
             $sorting = $categories["sorting"];
             unset($categories["sorting"]);
@@ -125,7 +122,7 @@ class GameSearch
             }
         }
 
-        // Sort
+        // sorting
         if (isset($sorting) && $sorting != null) {
             $params = explode("-", $sorting);
             $this->query->orderBy($params[0], $params[1]);
@@ -138,6 +135,8 @@ class GameSearch
     {
         $this->results = $this->query->get();
 
+        $this->sort();
+
         if (isset($_GET)) {
             $this->results->input = $_GET;
         }
@@ -147,7 +146,10 @@ class GameSearch
 
     public function paginatedResults()
     {
+
         $this->results = $this->query->paginate($this->perPage);
+
+
         if (isset($_GET)) {
             $this->results->input = $_GET;
         }
@@ -194,7 +196,7 @@ class GameController extends Controller
             return Redirect::route("login");
         }
 
-        return view("games.index")->withGames(GameSearch(Auth::user()->library())->searchBy($_GET)->paginatedResults());
+        return Redirect::route("games.index")->withGames(GameSearch(Auth::user()->library())->searchBy($_GET)->paginatedResults());
     }
 
     public function showInventory()

@@ -4,7 +4,7 @@
             <!-- Display logo -->
             <div class="col-6">
                 <a href="/">
-                    <img id="nav-logo" class='img-responsive' src="../images/logo.png"/>
+                    <img id="nav-logo" class='img-responsive' src="/images/logo.png"/>
                 </a>
             </div>
 

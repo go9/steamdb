@@ -274,42 +274,53 @@
                         @endif
                     @endif
                 </div>
+                @if(Auth::check() && Auth::user()->checkRole("g2a") && ($price = $game->prices->sortByDesc("created_at")->first()))
+                    <div style="background-color:black;color:white;bottom:0;right:0;position: absolute;padding:5px;">
+                        {!! money($game->newest_g2a_price) !!}
+                    </div>
+                @endif
+
+
+
             </div>
         @endforeach
     @elseif($settings["display_type"] == "list")
-        <table class="table table-bordered">
+        <table class="table table-bordered table-sm">
             <thead>
                 <tr>
-                    <th style="width:10px;"></th>
-                    <th style="width:10px;"></th>
-                    <th></th>
+                    <!--<th class="hidden-xs hidden-sm" style="width:20%;max-width:150px;"></th>-->
+                    <th style=""></th>
                 </tr>
             </thead>
             <tbody>
             @foreach($games as $key => $game)
                 <tr>
+                    <!--
                     <td>
+                        <img class="responsive" style="width:100%;" src="{!! $game->headerImage()->url !!}">
+                    </td>
+                    -->
+                    <td style="padding:15px;">
                         @if(Auth::user() && Auth::user()->isIn($game->id, "inventory"))
                             <a>
                                 {!! App\Icon::find("archive")->wrap() !!}
                             </a>
                         @endif
-                    </td>
 
-                    <td>
                         @if(Auth::user() && Auth::user()->isIn($game->id, "library"))
                             <a>
                                 {!! App\Icon::find("book")->wrap() !!}
                             </a>
                         @endif
-                    </td>
 
-                    <td>
-                        <a href="/games/{{$game->id}}">
-                            {!! $game->name !!}
-                        </a>
-
+                        <a href="/games/{{$game->id}}">{!! $game->name !!}</a> <br>
+                            {!! $game->type != "game" ? $game->type : ""!!}
                     </td>
+                    @if(Auth::check() && Auth::user()->checkRole("g2a") && ($price = $game->prices->sortByDesc("created_at")->first()))
+                        <td style="padding:15px;">
+                                {!! money($price->pivot->price) !!}
+                        </td>
+                    @endif
                 </tr>
             @endforeach
             </tbody>
