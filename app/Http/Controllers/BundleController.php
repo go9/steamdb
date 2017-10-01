@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 use App\Bundle;
 use App\Game;
 
@@ -79,6 +80,17 @@ class BundleController extends Controller
      */
     public function edit($id)
     {
+        if(Auth::check()){
+            if(!Auth::user()->checkRole("admin")){
+                Session::flash("message-info", "You do not have access to this page. Please login with the proper credentials.");
+                return back();
+            }
+        }
+        else{
+            Session::flash("message-info", "This is a restricted page. You must be logged in and have the appropriate access to view this page");
+            return Redirect::route("login");
+        }
+
         return view("bundles.edit")->withBundle(Bundle::find($id));
     }
 

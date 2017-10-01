@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 
 use App\User;
 use App\Game;
+use App\Icon;
 
 class SettingsController extends Controller
 {
@@ -18,7 +19,11 @@ class SettingsController extends Controller
             return Redirect::route("login");
         }
 
-        return view("settings.index");
+        return view("settings.myaccount");
+    }
+
+    public function editIcons(){
+        return view("settings.icons")->withIcons(Icon::all());
     }
 
     public function showConnections(){
@@ -54,7 +59,6 @@ class SettingsController extends Controller
 
         return back();
     }
-
 
     public function g2aPriceUpdater(){
         return view("settings.g2a_price_updater")->withGames(Game::whereNotNull("g2a_id")->where("public",1)->get());

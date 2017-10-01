@@ -64,8 +64,7 @@ class PurchaseController extends Controller
             "user_id" => "required|numeric",
             "store_id" => "required|numeric",
             "name" => "required|string",
-            "price_paid" => "numeric",
-            "price_paid" => "numeric",
+            "price_paid" => "nullable|numeric",
             "date" => "nullable|date",
             "notes" => "nullable",
             "tier_purchased" => "nullable|numeric",
@@ -88,12 +87,7 @@ class PurchaseController extends Controller
      */
     public function show($id)
     {
-        $purchase = Purchase::find($id);
-        if($purchase == null || !Auth::check() || $purchase->user_id != Auth::user()->id){
-            Session::flash("message-danger", "Invalid purchase");
-        }
 
-        return view("purchases.purchase");
     }
 
     /**
@@ -161,16 +155,15 @@ class PurchaseController extends Controller
         $purchase = Purchase::find($id);
 
         if($purchase == null){
-            Session::flash("message-danger", "The purchase could not be located. Nothing was deleted.");
+            return ["sucess" => false, "message" => "Purchase not found."];
         }
         else if ($purchase->user->id != Auth::user()->id){
-            Session::flash("message-danger", "This purchase doesn't belong to you.");
+            return ["sucess" => false, "message" => "The purchase doesn't belong to you" ,"data" => $purchase];
         }
         else{
-            Session::flash("message-success", "The purchase was deleted");
             $purchase->delete();
+            return ["sucess" => true, "message" => "The purchase was deleted" ,"data" => $purchase];
         }
-       return ["sucess" => true, "data" => $purchase];
     }
 
     public function destroyPurchaseItem(Request $request){

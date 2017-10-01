@@ -76,6 +76,13 @@
                 <strong>Bundles</strong>
             </a>
         </div>
+
+        <div class='menu-item'>
+            <div style="height:5px;width:100%;background-color:transparent;"></div>
+            <a class="nav-link" id='nav-item-games' href="/games">
+                <strong>Games</strong>
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -88,6 +95,8 @@
     <script> $("#nav-item-purchases").addClass("active"); </script>
 @elseif(strpos(url()->current(), "bundles") !== false)
     <script> $("#nav-item-bundles").addClass("active"); </script>
+@elseif(strpos(url()->current(), "games") !== false)
+    <script> $("#nav-item-games").addClass("active"); </script>
 @endif
 
 

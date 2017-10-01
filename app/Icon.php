@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Icon extends Model
 {
+    public $incrementing = false;
+    public $timestamps = false;
+
     public function wrap($style = []){
 
         // get the color
@@ -24,7 +27,7 @@ class Icon extends Model
 
         return "<i
                 {$style["id"]}
-                class='fa fa-{$this->attributes['id']}{$style['size']}'
+                class='fa fa-{$this->attributes['id']} {$style['size']}'
                 style='color:{$style['color']}'
                 title='{$style["title"]}'
                 aria-hidden='true'></i>";

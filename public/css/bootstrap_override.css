@@ -33,6 +33,14 @@ table.table-borderless td, table.table-borderless th {
     border: none !important;
 }
 
+.table-bordered{
+    background-color:rgba(1,1,1,.03);
+}
+.table-bordered td,
+.table-bordered th{
+    border: 1px solid rgba(1,1,1,.1) !important;
+}
+
 .btn-empty {
     background: none;
     border: none;
@@ -62,6 +70,7 @@ a:hover {
     border-radius: 10px;
     width: 5px;
     background-color: transparent;
+    position: fixed;
 }
 
 *::-webkit-scrollbar-track {

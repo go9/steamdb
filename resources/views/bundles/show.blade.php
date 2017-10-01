@@ -8,72 +8,6 @@
                 Add to Purchases
             </button>
 
-            <!-- Add Bundle to Purchase Modal -->
-            <div class="modal fade" id="bundle-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Add To Purchase</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form class="form" id="submit-bundle-form" method="POST"
-                              action="{{ action('PurchaseController@addBundleToPurchase') }}">
-                            {{ csrf_field() }}
-                            <input type="hidden" name="user_id" value="{!! Auth::user()->id !!}">
-                            <input type="hidden" name="bundle_id" value="{!! $bundle->id !!}">
-                            <input type="hidden" name="store_id" value="{!! $bundle->store_id !!}">
-                            <input type="hidden" name="name" value="{!! $bundle->name !!}">
-                            <div class="modal-body">
-                                <div class="form-group row">
-                                    <label for="example-search-input" class="col-2 col-form-label">Purchase Date*</label>
-                                    <div class="col-10">
-                                        <input class="form-control" type="date" id="purchase-date" name="date_purchased">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-
-                                    <label for="example-email-input" class="col-2 col-form-label">Tier Purchased</label>
-                                    <div class="col-10">
-                                        <select id="purchase-tier" name="tier_purchased" class="form-control">
-                                            @for($i = 1; $i <= count($bundle->tiers()); $i++)
-                                                <option value="{!! $i !!}">Tier {!! $i !!}</option>
-                                            @endfor
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label for="example-email-input" class="col-2 col-form-label">Price*</label>
-                                    <div class="col-10">
-                                        <input class="form-control" type="number" id="purchase-price" name="price_paid">
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <label for="example-text-input" class="col-2 col-form-label">Notes</label>
-                                    <div class="col-10">
-                                    <textarea
-                                            class="form-control"
-                                            id="purchase-notes"
-                                            name="notes"
-                                            value="">
-                                    </textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
              @if(Auth::user()->checkRole("admin"))
                 <a class="dropdown-item" href='/bundles/{!! $bundle->id !!}/edit'>Edit</a>
             @endif
@@ -136,6 +70,66 @@
         </div>
     </div>
 
+<!-- Add Bundle to Purchase Modal -->
+<div class="modal fade" id="bundle-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add To Purchase</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form" id="submit-bundle-form" method="POST"
+                  action="{{ action('PurchaseController@addBundleToPurchase') }}">
+                {{ csrf_field() }}
+                <input type="hidden" name="user_id" value="{!! Auth::user()->id !!}">
+                <input type="hidden" name="bundle_id" value="{!! $bundle->id !!}">
+                <input type="hidden" name="store_id" value="{!! $bundle->store_id !!}">
+                <input type="hidden" name="name" value="{!! $bundle->name !!}">
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="example-search-input" class="col-4 col-form-label">Purchase Date*</label>
+                        <div class="col-8">
+                            <input class="form-control" type="date" id="purchase-date" name="date_purchased" value="{!! \Carbon\Carbon::today()->toDateString() !!}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+
+                        <label for="example-email-input" class="col-4 col-form-label">Tier Purchased</label>
+                        <div class="col-8">
+                            <select id="purchase-tier" name="tier_purchased" class="form-control">
+                                @for($i = 1; $i <= count($bundle->tiers()); $i++)
+                                    <option value="{!! $i !!}">Tier {!! $i !!}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="example-email-input" class="col-4 col-form-label">Price paid</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" id="purchase-price" name="price_paid">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="example-text-input" class="col-4 col-form-label">Notes</label>
+                        <div class="col-8">
+                                    <textarea class="form-control" id="purchase-notes" name="notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection
 

@@ -2,42 +2,29 @@
 @section('title')
 
 @section('content')
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-lg-4 col-xl-3" style="margin-bottom:10px;">
-                <ul class="list-group">
-                    <li class="list-group-item list-group-item-info">User Settings</li>
-                    <li class="list-group-item list-group-item-info" style="padding:5px;">
-                        <div class="list-group " style="width:100%;">
-                            <a href="/settings/myaccount" class="list-group-item list-group-item-action">My Account</a>
-                            <a href="/settings/connections"
-                               class="list-group-item list-group-item-action">Connections</a>
-                        </div>
-                    </li>
-                </ul>
-                @if(Auth::check() && Auth::user()->checkRole("admin"))
-                    <ul class="list-group" style="margin-top:10px;margin-bottom:10px;">
-                        <li class="list-group-item list-group-item-warning">Admin Settings</li>
-                        <li class="list-group-item list-group-item-warning" style="padding:5px;">
-                            <div class="list-group" style="width:100%;">
-                                <a href="#" class="list-group-item list-group-item-action">Manage Icons</a>
-                                <a href="/settings/update_database_games"
-                                   class="list-group-item list-group-item-action">Update Games</a>
-                                <a href="/settings/update_database_packages"
-                                   class="list-group-item list-group-item-action">Update Packages</a>
-                                <a href="/settings/g2a_auto_matcher" class="list-group-item list-group-item-action">G2a
-                                    Auto Matcher</a>
-                                <a href="/settings/g2a_price_updater" class="list-group-item list-group-item-action">G2a
-                                    Update Prices</a>
-                            </div>
-                        </li>
-                    </ul>
-                @endif
-            </div>
+@section('actionbar-contents')
+    <a class="dropdown-item" href="/settings/myaccount">My Account</a>
+    @if(Auth::check() && Auth::user()->checkRole("admin"))
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">Admin Actions</h6>
+        <a href="/settings/edit_icons"
+           class="dropdown-item">Manage Icons</a>
+        <a href="/settings/update_database_games"
+           class="dropdown-item">Update Games</a>
+        <a href="/settings/update_database_packages"
+           class="dropdown-item">Update Packages</a>
+        <a href="/settings/g2a_auto_matcher"
+           class="dropdown-item">G2aAuto Matcher</a>
+        <a href="/settings/g2a_price_updater"
+           class="dropdown-item">G2aUpdate Prices</a>
 
-            <div class="col-xs-12 col-lg-8 col-xl-9">
-                @yield("settings-content")
-            </div>
-        </div>
-    </div>
+    @endif
+
+    <script>$("#action-bar").show()</script>
+@endsection
+
+
+    @yield("settings-content")
+
+
 @endsection

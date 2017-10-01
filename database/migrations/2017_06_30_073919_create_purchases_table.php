@@ -20,7 +20,9 @@ class CreatePurchasesTable extends Migration
             $table->integer('store_id');
             $table->string('name');
 
-            $table->decimal('price_paid');
+            $table->decimal('price_paid')->nullable();
+            $table->decimal('price_sold')->nullable();
+
             $table->date('date_purchased')->nullable();
             $table->text('notes')->nullable();
 

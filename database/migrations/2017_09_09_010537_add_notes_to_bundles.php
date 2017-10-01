@@ -14,7 +14,7 @@ class AddNotesToBundles extends Migration
     public function up()
     {
         Schema::table('bundles', function($table) {
-            $table->text('notes');
+            $table->text('notes')->nullable();
         });
     }
 

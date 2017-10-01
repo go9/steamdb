@@ -196,7 +196,8 @@ class GameController extends Controller
             return Redirect::route("login");
         }
 
-        return Redirect::route("games.index")->withGames(GameSearch(Auth::user()->library())->searchBy($_GET)->paginatedResults());
+        return view("games.index")->withGames(GameSearch(Auth::user()->library())->searchBy($_GET)->paginatedResults());
+
     }
 
     public function showInventory()
@@ -245,10 +246,13 @@ class GameController extends Controller
 
 
     // Functions
+
     public function search()
     {
         return GameSearch()->searchBy($_GET)->paginatedResults();
     }
+
+    // Steam
 
     public function syncApplist()
     {
@@ -289,6 +293,12 @@ class GameController extends Controller
 
         return $games;
     }
+
+    public function unlinkSteam(){
+
+    } // TODO
+
+    // G2a
 
     public function g2aAutoMatcher(Request $request){
         $this->validate($request, [

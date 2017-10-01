@@ -27,7 +27,7 @@
     </script>
 </div>
 
-<div id="main-continer">
+<div id="main-continer" style="overflow:hidden;">
 
     @include("partials._nav")
 
@@ -47,7 +47,9 @@
             <div class="clear"></div>
         </div>
 
-        @include('partials._messages')
+        <div style="width:100%;">
+            @include('partials._messages')
+        </div>
         @yield("content")
 
     </div>

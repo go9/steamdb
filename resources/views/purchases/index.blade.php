@@ -101,14 +101,21 @@
 
     <!-- Buttons -->
 
-    <!-- Add New -->
-    <div class="row" style="width:100%;padding:15px;">
-        <button class='btn btn-primary'
-                type="button"
+
+    @section('actionbar-contents')
+        <button class="dropdown-item" type="button"
                 data-toggle="modal"
-                data-target="#new-purchase-modal">Add New Purchase
+                data-target="#new-purchase-modal">
+            Add New Purchase
         </button>
-    </div>
+
+        @if(Auth::user()->checkRole("admin"))
+        @endif
+
+        <script>$("#action-bar").show()</script>
+    @endsection
+
+
 
 
     <script>

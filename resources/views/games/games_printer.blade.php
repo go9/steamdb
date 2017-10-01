@@ -13,15 +13,6 @@
 @endphp
 
 <div class="row">
-    {{-- Check if games there are any games to show. --}}
-    @if(sizeof($games) == 0)
-        <div class="col-12">
-            <div class="alert alert-danger" style="width:100%;">
-                <strong>Whoops!</strong> Nothing to see here.
-            </div>
-        </div>
-    @endif
-
     {{-- Print advanced search --}}
     @if($settings["print_advanced"])
         <form class="form" id="advanced-search" style="width:100%;padding:10px;padding-top:30px;">
@@ -195,7 +186,7 @@
                     </div>
                 </div>
             </div>
-                <div class="form-inline" style="float:right;">
+            <div class="form-inline" style="float:right;">
                 <div class="form-group">
                     <label class="mr-sm-2" for="sorting">Sort By</label>
                     <select
@@ -281,21 +272,14 @@
                 @endif
 
 
-
             </div>
         @endforeach
     @elseif($settings["display_type"] == "list")
         <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <!--<th class="hidden-xs hidden-sm" style="width:20%;max-width:150px;"></th>-->
-                    <th style=""></th>
-                </tr>
-            </thead>
             <tbody>
             @foreach($games as $key => $game)
                 <tr>
-                    <!--
+                <!--
                     <td>
                         <img class="responsive" style="width:100%;" src="{!! $game->headerImage()->url !!}">
                     </td>
@@ -314,13 +298,15 @@
                         @endif
 
                         <a href="/games/{{$game->id}}">{!! $game->name !!}</a> <br>
-                            {!! $game->type != "game" ? $game->type : ""!!}
+                        {!! $game->type != "game" ? $game->type : ""!!}
                     </td>
-                    @if(Auth::check() && Auth::user()->checkRole("g2a") && ($price = $game->prices->sortByDesc("created_at")->first()))
-                        <td style="padding:15px;">
-                                {!! money($price->pivot->price) !!}
-                        </td>
-                    @endif
+                    <td style="padding:15px;">
+                        @if(Auth::check() && Auth::user()->checkRole("g2a") && ($price = $game->prices->sortByDesc("created_at")->first()))
+
+                            {!! money($price->pivot->price) !!}
+
+                        @endif
+                    </td>
                 </tr>
             @endforeach
             </tbody>

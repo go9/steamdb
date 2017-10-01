@@ -46,9 +46,12 @@ Route::get("settings/g2a_auto_matcher", "SettingsController@g2aAutoMatcher");
 Route::get("settings/g2a_price_updater", "SettingsController@g2aPriceUpdater");
 Route::post("settings/g2a_update_price", "GameController@g2aUpdatePrice");
 Route::get("settings/myaccount", "SettingsController@showMyAccount");
-
+Route::get("settings/edit_icons", "SettingsController@editIcons");
+Route::post("settings/update_icon", "IconController@update");
+Route::post("settings/new_icon", "IconController@store");
 Route::get("settings/update_database_games", "GameController@updateGames");
 Route::get("settings/update_database_packages", "GameController@updatePackages");
+
 
 Route::get('auth/steam', 'AuthController@redirectToSteam')->name('auth.steam');
 Route::get('auth/steam/handle', 'AuthController@handle')->name('auth.steam.handle');
