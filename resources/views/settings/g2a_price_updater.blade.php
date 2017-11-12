@@ -4,7 +4,7 @@
     <h1>G2a Price Updater</h1>
     <p>
         Number of games: <input id="counter" value="{!! count($games) !!}"> <br>
-        Skip fetched prices (in hours): <input id="hours" value="3">
+        Skip fetched prices (in hours): <input id="hours" value="0">
     </p>
     <button class="btn" id="start">Start</button>
 

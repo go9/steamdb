@@ -11,18 +11,37 @@
 |
 */
 
+Route::get("/test", function(){
+    return view("test");
+});
 
 
-Route::get("/test", 'GameController@test');
+Route::post('conversation/insert/user', 'MessageController@insertUserIntoConversation');
+Route::post('conversation/create/message', 'MessageController@createMessage')->name("message.create");
+Route::post('conversation/create', 'MessageController@createConversation')->name("conversation.create");
+Route::post('conversation/get/all', 'MessageController@getUsersConversations');
+
+
+//Route::post('message/send', 'MessageController@sendMessage')->name('message.send');
+//Route::post('message/send_new', 'MessageController@sendNewMessage')->name('message.new');
+//Route::post('message/get_conversation', 'MessageController@getConversation')->name('message.convo');
+//Route::post('message/get_conversations', 'MessageController@getConversations')->name("messages.convos");
+//Route::delete('message/delete/{id}', 'MessageController@deleteMessage')->name('message.delete');
+Route::get("/messages", 'MessageController@index');
+
+
+Route::get("/user/{id}", 'GameController@userProfile');
 
 Route::get("/library", 'GameController@showLibrary')->name("games.library");
 Route::get("/inventory", 'GameController@showInventory')->name("games.inventory");
+Route::get("/wishlist", 'GameController@showWishlist')->name("games.wishlist");
 Route::get('/search', 'GameController@search');
 
 Route::get('/games/sync_applist_from_steam', 'GameController@SyncApplistTest');
 Route::get('/games/store/{id}', 'GameController@storeGame');
 Route::get('/games/store_package/{id}', 'GameController@storePackage');
 Route::post('/games/auto_match', 'GameController@g2aAutoMatcher');
+Route::post('/games/update_wishlist', 'GameController@updateWishlist');
 Route::resource('games', 'GameController');
 
 Route::resource('purchases', 'PurchaseController');

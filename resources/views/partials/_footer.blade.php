@@ -1,5 +1,7 @@
 <div id="footer-container">
-    <div>
+    <div id="sidebar-chat" class="container-fluid" style="display:block;white-space:nowrap;"></div>
+
+    <div class="container">
         Copyright © {!! date("Y") !!} SteamGM.com
         <div style="float:right;">
             <a href="https://www.linkedin.com/in/giorlando/" target="_blank">

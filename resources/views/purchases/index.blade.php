@@ -80,6 +80,11 @@
 
     <script>
         function processImport(game_ids, purchase_id) {
+
+            if(game_ids.length === 0){
+                return;
+            }
+
             $.ajax({
                 url: '/purchase/insert_game',
                 type: 'POST',
@@ -223,10 +228,6 @@
         });
 
         function resize() {
-            console.log("Content container: " + $("#content-container").width());
-            console.log("Purchase Table Thead: " + $("#purchase-table-thead").width());
-            console.log("table name: " +  $("#table-name").width());
-
             var width =
                 $("#content-container").width()
                 - ($("#purchase-table-thead").width() - $("#table-name").width())

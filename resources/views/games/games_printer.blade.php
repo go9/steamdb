@@ -263,6 +263,17 @@
                                 {!! $icon->wrap() !!}
                             </a>
                         @endif
+
+                            @if(Auth::user()->isIn($game->id, "wishlist"))
+                                @php($icon = App\Icon::find("gift"))
+                                <a class="card-title"
+                                   style="background-color:rgba(1,1,1,.6);
+                                           font-size:1.4em;
+                                           padding:5px;">
+                                    {!! $icon->wrap() !!}
+                                </a>
+                            @endif
+
                     @endif
                 </div>
                 @if(Auth::check() && Auth::user()->checkRole("g2a") && ($price = $game->prices->sortByDesc("created_at")->first()))

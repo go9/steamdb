@@ -31,9 +31,7 @@
 
     @include("partials._nav")
 
-    <div id="content-container" class="container"
-         style="min-height:1000px;background-color:#EDECED ;padding:15px; padding-top:0px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-
+    <div id="content-container" class="container"style="min-height:1000px;background-color:#EDECED ;padding:15px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
         <div id="action-bar" style="width:100%;padding:5px;display:none;">
             <div class="dropdown pull-right" style="float:right;">
                 <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"

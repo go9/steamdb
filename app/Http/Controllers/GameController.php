@@ -21,6 +21,7 @@ use App\Movie;
 use App\Developer;
 use App\Publisher;
 use App\Image;
+use App\User;
 use App\ImageTheme;
 use App\PackageContent;
 use App\Store;
@@ -84,7 +85,7 @@ class GameSearch
         }
 
         foreach ($categories as $key => $items) {
-            if(!in_array($key, $allowed)){
+            if (!in_array($key, $allowed)) {
                 $skipped[] = $key;
                 continue;
             }
@@ -170,6 +171,19 @@ class GameController extends Controller
     // Views
     public function test()
     {
+
+        dd(Auth::user()->catalogs());
+        /*
+        $steam = resolve('App\External\Steam');
+
+        //$steamLibrary =  Game::whereIn("steam_id", $steam->getOwnedGamesAsArray($user->steamid));
+
+        return view("games.index")->withGames(
+            GameSearch(Game::whereIn("steam_id", $steam->getOwnedGamesAsArray(Auth::user()->steamid)))
+                ->searchBy($_GET)->paginatedResults()
+        );
+
+
         /*
         $steam = resolve('App\External\Steam');
         return \redirect(
@@ -177,10 +191,6 @@ class GameController extends Controller
         );
         //return view("test");
         */
-
-        $id = 321;
-
-
     }
 
     public function home()
@@ -210,6 +220,16 @@ class GameController extends Controller
         return view("games.index")->withGames(GameSearch(Auth::user()->inventory())->searchBy($_GET)->paginatedResults());
     }
 
+    public function showWishlist()
+    {
+        if (!Auth::check()) {
+            Session::flash("message-info", "Log in or create an account to add games to your Wishlist!");
+            return Redirect::route("login");
+        }
+
+        return view("games.index")->withGames(GameSearch(Auth::user()->wishlist())->searchBy($_GET)->paginatedResults());
+    }
+
     public function show($id)
     {
         $game = Game::find($id);
@@ -234,6 +254,32 @@ class GameController extends Controller
         );
     }
 
+    public function updateWishlist(Request $request)
+    {
+        $this->validate($request,
+            [
+                "game_id" => "required|numeric",
+                "user_id" => "required|numeric",
+            ]
+        );
+
+        // continue validation
+        if (($user = User::find($request->user_id)) == null) {
+            Session::flash("message-danger", "Invalid user");
+            return back();
+
+        }
+        else if (($game = Game::find($request->game_id)) == null) {
+            Session::flash("message-danger", "Invalid game");
+            return back();
+        }
+
+        $user->games()->toggle($request->game_id);
+        return back();
+
+
+    }
+
     public function updatePackages()
     {
         return view("settings.updatedatabasepackages")->withGames(
@@ -244,6 +290,17 @@ class GameController extends Controller
         );
     }
 
+    public function userProfile($id)
+    {
+        $user = User::find($id);
+
+        if ($user == null) {
+            return ["success" => false];
+        }
+
+        return view("users.profile")->withUser($user);
+
+    }
 
     // Functions
 
@@ -294,33 +351,34 @@ class GameController extends Controller
         return $games;
     }
 
-    public function unlinkSteam(){
+    public function unlinkSteam()
+    {
 
     } // TODO
 
     // G2a
 
-    public function g2aAutoMatcher(Request $request){
+    public function g2aAutoMatcher(Request $request)
+    {
         $this->validate($request, [
             "game_id" => "required|numeric",
         ]);
 
         $game = Game::find($request->game_id);
 
-        if($game == null){
+        if ($game == null) {
             return ["success" => false, "code" => 1, "message" => "Invalid game id.", "input" => ["game_id" => $request->game_id]];
         }
 
 
-        if($this->g2aAutoMatch($game) == false){
+        if ($this->g2aAutoMatch($game) == false) {
             return ["success" => false, "code" => 2, "message" => "No match found", "data" => ["game" => [
                 "id" => $game->id,
                 "name" => $game->name,
                 "type" => $game->type,
                 "g2a_id" => $game->g2a_id
             ]]];;
-        }
-        else{
+        } else {
             return ["success" => true, "data" => ["game" => [
                 "id" => $game->id,
                 "name" => $game->name,
@@ -329,28 +387,30 @@ class GameController extends Controller
             ]]];
         }
 
+    }
+
+    public function g2aAutoMatch($game)
+    {
+
+        // Search G2a For any matches
+        $results = resolve("App\External\G2aApi")->searchByPhrase($game->name);
+
+        if (isset($results["perfect_match"]) && $results["perfect_match"] != false) {
+            $game->g2a_id = $results["perfect_match"]["id"];
+            $game->save();
+            return true;
+        } else {
+            $game->g2a_id = 0;
+            $game->save();
+            return false;
         }
-
-    public function g2aAutoMatch($game){
-
-            // Search G2a For any matches
-            $results = resolve("App\External\G2aApi")->searchByPhrase($game->name);
-
-            if (isset($results["perfect_match"]) && $results["perfect_match"] != false) {
-                $game->g2a_id = $results["perfect_match"]["id"];
-                $game->save();
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
+    }
 
     public function g2aUpdatePrice(Request $request)
     {
         $this->validate($request, [
             "game_id" => "required|numeric",
-            "hours" => "nullable|numeric"
+            "hours" => "required|numeric"
         ]);
 
 
@@ -360,19 +420,20 @@ class GameController extends Controller
         }
 
         $g2a = resolve("App\External\G2aApi");
+        $prices = DB::table("game_store")
+            ->where("game_id", $game->id)
+            ->where("store_id", $g2a->getStore()->id)
+            ->where("created_at", '>=', Carbon::now()->subHours($request->hours)->toDateTimeString())
+            ->get();
 
         // Check if the request contains hours flag. If it's greater than 0, check if we have the prices already
-        if (isset($request->hours) && $request->hours != 0 && DB::table("game_store")
-                ->where("game_id", $game->id)
-                ->where("store_id", $g2a->getStore()->id)
-                ->where("created_at", '>=', Carbon::now()->subHours($request->hours))
-                ->get() != null
-        ) {
+        if ($request->hours > 0 && count($prices) > 0) {
             return [
                 "success" => false,
                 "code" => 1,
                 "message" => "Already have new enough price ({$request->hours} old)",
-                "data" => $game
+                "data" => $game,
+                "prices" => $prices
             ];
 
         } else {
@@ -683,7 +744,7 @@ class GameController extends Controller
         $gamesInPackage = null;
 
         // Verify that there are some apps
-        if(!isset($content['apps'])){
+        if (!isset($content['apps'])) {
 
             $package->public = false;
             $package->save();

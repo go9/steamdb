@@ -61,7 +61,7 @@ class SettingsController extends Controller
     }
 
     public function g2aPriceUpdater(){
-        return view("settings.g2a_price_updater")->withGames(Game::whereNotNull("g2a_id")->where("public",1)->get());
+        return view("settings.g2a_price_updater")->withGames(Game::whereNotNull("g2a_id")->where("g2a_id",">",0)->where("public",1)->get());
     }
 
     public function g2aAutoMatcher(){

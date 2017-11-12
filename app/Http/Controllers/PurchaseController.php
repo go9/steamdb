@@ -289,4 +289,14 @@ class PurchaseController extends Controller
 
         return ["success" => "true", "data" => $request];
     }
+
+    public function findMissingGames($user){
+        $steam = resolve('App\External\Steam');
+
+        $steamLibrary =  Game::whereIn("steam_id", $steam->getOwnedGamesAsArray($user->steamid))->pluck("id")->toArray();
+        $localLibrary = $user->catalogs()["library"];
+
+        return ["steam" => array_diff($localLibrary, $steamLibrary),"local" => array_diff($steamLibrary, $localLibrary)];
+    }
+
 }

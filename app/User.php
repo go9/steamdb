@@ -14,7 +14,8 @@ class User extends Authenticatable
     public $catalogs = [
         "scanned" => false,
         "inventory" => [],
-        "library" => []
+        "library" => [],
+        "wishlist" => []
     ];
 
     protected $fillable = [
@@ -31,7 +32,17 @@ class User extends Authenticatable
         return $this->hasMany('App\Purchase');
     }
 
-    // Custom
+    public function games(){
+        return $this->belongsToMany("App\Game");
+    }
+
+    public function conversations(){
+        return $this->belongsToMany("App\Conversation");
+    }
+
+    public function messages(){
+        return $this->hasMany("App\Message");
+    }
 
     public function library()
     {
@@ -48,6 +59,13 @@ class User extends Authenticatable
             $this->catalogs();
         }
         return Game::whereIn("id", $this->catalogs["inventory"]);
+    }
+
+    public function wishlist(){
+        if ($this->catalogs["scanned"] == false) {
+            $this->catalogs();
+        }
+        return Game::whereIn("id", $this->catalogs["wishlist"]);
     }
 
     public function isIn($game_id, $catalog)
@@ -68,7 +86,7 @@ class User extends Authenticatable
     {
         // Check if we scanned already
         if ($this->catalogs["scanned"] == false) {
-            // Get all the purchases
+            // Get all the purchases (for library and inventory)
             foreach ($this->purchases as $purchase) {
                 // Go through the purchases' items
                 foreach ($purchase->games as $game) {
@@ -85,6 +103,12 @@ class User extends Authenticatable
                     }
                 }
             }
+
+            // Get wishlist
+            foreach($this->games as $game){
+                $this->catalogs["wishlist"][] = $game->id;
+            }
+
             // Set scanned to true
             $this->catalogs["scanned"] = true;
         }

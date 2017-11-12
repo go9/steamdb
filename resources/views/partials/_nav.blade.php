@@ -23,6 +23,8 @@
 
                                 <div class="dropdown-menu" aria-labelledby="user-menu">
                                     <a class="dropdown-item" href="/settings">Settings</a>
+                                    <a class="dropdown-item" href="/messages/">Messages</a>
+                                    <a class="dropdown-item" href="/user/{!! Auth::user()->id !!}">Profile</a>
                                     <form method="post" action="{!!route("logout") !!}">
                                         {{ csrf_field() }}
                                         <button class="dropdown-item">Logout</button>
@@ -63,6 +65,15 @@
             </a>
         </div>
 
+        <div class='menu-item' id="main-nav-wishlist">
+            <div style="height:5px;width:100%;background-color:{!! App\Icon::find("gift")->default_color !!};"></div>
+
+            <a class="nav-link" id='nav-item-wishlist' href="/wishlist">
+                {!! App\Icon::find("gift")->wrap() !!}
+                <strong>Wishlist</strong>
+            </a>
+        </div>
+
         <div class='menu-item'>
             <div style="height:5px;width:100%;background-color:transparent;"></div>
             <a class="nav-link" id='nav-item-purchases' href="/purchases">
@@ -91,6 +102,8 @@
     <script> $("#nav-item-library").addClass("active"); </script>
 @elseif(strpos(url()->current(), "inventory") !== false)
     <script> $("#nav-item-inventory").addClass("active"); </script>
+@elseif(strpos(url()->current(), "wishlist") !== false)
+    <script> $("#nav-item-wishlist").addClass("active"); </script>
 @elseif(strpos(url()->current(), "purchases") !== false)
     <script> $("#nav-item-purchases").addClass("active"); </script>
 @elseif(strpos(url()->current(), "bundles") !== false)

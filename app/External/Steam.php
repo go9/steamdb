@@ -191,7 +191,6 @@ class Steam
         return $result;
     }
 
-    // Api's
 
     function buildUrl($api, $items){
         $base = "http://api.steampowered.com";
@@ -201,19 +200,28 @@ class Steam
             if($key == null || $item == null){
                 continue;
             }
-            $this->args[$key] = $item;
+            $args[$key] = $item;
         }
 
         return $base . $api . "?" . http_build_query($args);
     }
 
+    function decodeUrl($url){
+
+        $json = file_get_contents($url);
+        $content = json_decode($json, true);
+        return $content;
+
+    }
+
+    // Api's
     function newsForApp($appid, $count = 999999, $length = 999999)
     {
-        return $this->buildUrl("/ISteamNews/GetNewsForApp/v0002/", [
+        return $this->decodeUrl($this->buildUrl("/ISteamNews/GetNewsForApp/v0002/", [
             "count" => $count,
             "maxlength" =>$length,
             "appid" =>$appid
-        ]);
+        ]));
     }
 
     function globalAchievementPercentagesForApp($appid)
@@ -278,6 +286,14 @@ class Steam
             "steamid" => $steamid,
             "format" => "json",
         ]);
+    }
+
+    function getOwnedGamesAsArray($steamid){
+        $games = [];
+        foreach($this->decodeUrl($this->ownedGames($steamid))["response"]["games"] as $game){
+            $games[] = $game["appid"];
+        }
+        return $games;
     }
 
     function recentlyPlayedGames($steamid, $count = 999999)

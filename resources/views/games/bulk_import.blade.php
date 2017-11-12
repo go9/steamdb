@@ -1,16 +1,13 @@
-{{--
-<button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#bulk-import-modal">
-    Bulk Importer
-</button>
---}}
-<script>
-    var from = null;
-    // Check if there is a from variable
-    $(document).on('show.bs.modal','#bulk-import-modal', function(e) {
-        from = $(e.relatedTarget).data("from");
-    });
-</script>
-
+<style>
+    #games{
+        width:100%;height:100px;
+        transition: height .5s;
+    }
+    #games:focus{
+        height:300px;
+        transition: height .5s;
+    }
+</style>
 <div class="modal fade" id="bulk-import-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -23,7 +20,7 @@
             <div class="modal-body">
                 <p>
                     Quickly search for multiple games
-                    <textarea id="games" style="width:100%;height:300px;"></textarea><br>
+                    <textarea id="games" style=""></textarea><br>
                 </p>
                 <button class="btn btn-primary" style="width:100%;" onclick="parseUserInput();">Search</button>
                 <br>
@@ -47,6 +44,10 @@
             </div>
 
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"  onclick="resetModal();">
+                    Reset
+                </button>
+
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="processImport(saved, from);">
                     Continue
                 </button>
@@ -60,6 +61,29 @@
 <script>
     var inTable = [];
     var saved = [];
+    var from = null;
+    var counter = 0;
+
+    function getCounter(){
+        counter++;
+        return counter;
+
+    }
+
+    // Check if there is a from variable
+    $(document).on('show.bs.modal','#bulk-import-modal', function(e) {
+        from = $(e.relatedTarget).data("from");
+        resetModal();
+    });
+
+    function resetModal(){
+        // Empty table
+        inTable = [];
+        $("#bulk-import-table tbody").empty();
+
+        // Empty text area
+        $("#games").val('');
+    }
 
     function parseUserInput() {
         // Get the users input
@@ -72,7 +96,7 @@
 
             // Check if in array
             if (in_array(games[i], inTable) || games[i] === "") {
-                continue;
+                //continue;
             }
 
             // Add to array
@@ -86,41 +110,39 @@
                 },
                 dataType: 'json',
                 success: function (json, response, three) {
+                    var counter = getCounter();
+
                     // Empty Results Textarea
                     $('#results').empty();
 
                     // Get results from server
                     var data = json.data;
 
-                    // Append to table
-
-                    // Create row
-                    var tr = $("<tr>", {
-                        id: "" + json.input.keywords
-                    });
-                    // Add user input to row
-                    var td = $("<td>", {
-                        html: json.input.keywords.toUpperCase()
-                    });
-                    tr.append(td);
-
                     // Check if any matches were found
                     if (data.length == 0) {
-                        td = $("<td>", {
-                            html: "No Results"
-                        });
-                        tr.append(td);
-
-                        // Append empty td for save button
-                        tr.append($("<td>", {
-                            html: ""
-                        }));
+                        // Add users text back into text area
+                        var text = $("#games");
+                        text.val(text.val() + json.input.keywords + "\n");
                     }
                     else {
+                        // Create row
+                        var tr = $("<tr>", {
+                            id: "tr-" + counter
+                        });
+                        // Add user input to row
+                        var td = $("<td>", {
+                        }).append(
+                            $("<span>", {
+                                id: "td-" + counter,
+                                html: json.input.keywords.toUpperCase()
+                            }));
+
+                        tr.append(td);
+
                         // Create dropdown
                         var select = document.createElement("select");
                         select.className += "form-control";
-                        select.id = "game-" + json.input.keywords.replace(/\s+/g, '');
+                        select.id = "game-" + counter;
 
                         // Add all the results to the dropdown
                         for (var x = 0; x < data.length; x++) {
@@ -139,7 +161,8 @@
                         // Create save button
                         var button = $("<button/>", {
                                 click: function () {
-                                    saveGame(select.id);
+                                    button.toggle();
+                                    saveGame(counter);
                                 },
                                 class: "btn btn-secondary btn-table",
                                 text: "Add",
@@ -152,10 +175,27 @@
                             html: button
                         });
                         tr.append(td);
-                    }
 
-                    // Add row to table
-                    $('#bulk-import-table').append(tr);
+                        // Create remove button
+                        var removeButton = $("<button/>", {
+                                click: function () {
+                                    removeGame(counter);
+                                },
+                                class: "btn btn-secondary btn-table",
+                                text: "Remove",
+                            }
+                        );
+
+                        // Add remove button to row
+                        td = $("<td>", {
+                            class: "align-middle",
+                            html: removeButton
+                        });
+                        tr.append(td);
+
+                        // Add row to table
+                        $('#bulk-import-table').append(tr);
+                    }
                 },
                 error: function (request, error) {
                     console.log("error");
@@ -165,15 +205,29 @@
     }
 
     function saveGame(id) {
-        var select = $("#" + id.replace(/\s+/g, ''));
-
-        if (in_array(select.val(), saved)) {
-
-        }
-        else {
-            saved.push(select.val());
-            select.attr("disabled", true);
-        }
+        var select = $("#game-" + id);
+        saved.push(select.val());
+        select.attr("disabled", true);
     }
+
+    function removeGame(id) {
+
+
+        var select = $("#game-" + id);
+
+        // Add users text back into text area
+        var text = $("#games");
+        text.val(text.val() + $("#td-" + id).text() + "\n");
+
+        // Delete row
+        $("#tr-" + id).remove();
+
+        // Remove game from saved array
+        saved.splice(saved.indexOf(select.val()),1);
+
+
+    }
+
+
 
 </script>
